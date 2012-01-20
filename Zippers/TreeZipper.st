@@ -3,12 +3,10 @@ Object subclass: #TreeZipper
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
-!TreeZipper commentStamp: 'fbs 12/30/2010 22:41' prior: 0!
+!TreeZipper commentStamp: 'fbs 1/1/2011 18:01' prior: 0!
 I am a zipper for navigating over a variable-arity tree, that is a tree that may have any number of children per node.
 
-In particular, Smalltalk has a built-in tree structure, that of dependents: any Object may have any number of dependents, who may each in turn have their own dependents. Really, this allows for a directed graph rather than a tree. Further, we treat objects with no dependents as leaf nodes. Every node is its own value.
-
-That is, I allow one to navigate arbitrarily over a tree structure, and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
+That is, I allow one to navigate arbitrarily over a tree structure (a ZTree), and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
 
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:07'!
@@ -154,6 +152,16 @@ insertRight: anObject
 			value: trail value
 			leftNodes: trail leftNodes
 			rightNodes: (trail rightNodes copy addFirst: (ZTree value: anObject); yourself))! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+TreeZipper class
+	instanceVariableNames: ''!
+
+!TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
+on: aTree
+	^ self new focus: aTree trail: nil.! !
+es: (trail rightNodes copy addFirst: (ZTree value: anObject); yourself))! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 

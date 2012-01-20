@@ -3,14 +3,16 @@ Object subclass: #TreeZipperNode
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
-!TreeZipperNode commentStamp: 'fbs 12/31/2010 18:37' prior: 0!
+!TreeZipperNode commentStamp: 'fbs 1/1/2011 18:01' prior: 0!
 I am a recursive structure that describes a path through a tree.
 
   self path
 
  refers to the previous position in the path, itself a TreeZipperNode. The first entry in a path has
 
-  self path == nil!
+  self path == nil
+
+Being part of a zipper, I naturally represent a context-with-a-hole - that part of a tree minus the part currently under focus.!
 
 
 !TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 00:19'!
@@ -50,11 +52,7 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 		value: anObject
 		leftNodes: leftCollection
 		rightNodes: rightCollection.! !
-ect leftNodes: leftCollection rightNodes: rightCollection
-	^ self new
-		path: aTreeZipperTrail
-		value: anObject
-		leftNodes: leftCollection
+eftCollection
 		rightNodes: rightCollection.! !
 '!
 path: aTreeZipperTrail leftNodes: leftCollection rightNodes: rightCollection parentNodes: someObjects changed: aBoolean
