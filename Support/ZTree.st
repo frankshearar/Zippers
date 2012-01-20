@@ -7,13 +7,6 @@ Object subclass: #ZTree
 I'm a basic implementation of a tree, only present so that my package doesn't need to rely on a separate tree package.!
 
 
-!ZTree methodsFor: 'as yet unclassified' stamp: 'fbs 12/31/2010 00:08'!
-= anObject
-	^ anObject class == self class and:
-		[self value = anObject value and:
-			[self children = anObject children]].! !
-
-
 !ZTree methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:33'!
 children
 	^ children! !
@@ -43,6 +36,13 @@ value: anObject children: aCollection
 	value := anObject.
 	children := aCollection asOrderedCollection.! !
 
+
+!ZTree methodsFor: 'comparing' stamp: 'fbs 12/31/2010 00:08'!
+= anObject
+	^ anObject class == self class and:
+		[self value = anObject value and:
+			[self children = anObject children]].! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 ZTree class
@@ -55,6 +55,7 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
+ction.! !
 ableZTree new.
 	mutableCopy value: self value.
 	mutableCopy children addAll: (self children collect: #asMutableTree).
