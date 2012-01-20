@@ -4,9 +4,10 @@ TestCase subclass: #BinarySearchTreeTest
 	poolDictionaries: ''
 	category: 'Zippers-Tests'!
 
-!BinarySearchTreeTest methodsFor: 'testing - adding' stamp: 'fbs 5/1/2011 14:01'!
-testAddToEmptyTreeAdds
-	| items tree |
+!BinarySearchTreeTest methodsFor: 'as yet unclassified' stamp: 'fbs 2/13/2011 17:03'!
+testNewTreeIsBlank
+	self fail.! !
+
 	tree := (BinarySearchTree tree: ZTree empty) add: 1.
 	items := InOrderTraversal new traverse: tree collecting: #yourself.
 	

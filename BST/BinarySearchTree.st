@@ -1,10 +1,12 @@
 Object subclass: #BinarySearchTree
-	instanceVariableNames: 'tree'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-BST'!
-!BinarySearchTree commentStamp: 'fbs 2/28/2011 22:27' prior: 0!
-I implement a binary search tree in a strictly functional manner. I'm pretty naive, in that I do no balancing.!
+!BinarySearchTree commentStamp: 'fbs 2/5/2011 23:10' prior: 0!
+I implement a binary search tree in a strictly functional manner.!
+
+r. I'm pretty naive, in that I do no balancing.!
 
 
 !BinarySearchTree methodsFor: 'adding' stamp: 'fbs 12/20/2011 16:40'!
