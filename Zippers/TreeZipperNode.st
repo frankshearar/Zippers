@@ -38,10 +38,6 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 	rightNodes := rightCollection.! !
 
 
-!TreeZipperNode methodsFor: 'mutating' stamp: 'fbs 12/31/2010 18:41'!
-change: aBlock
-	"aBlock is a unary block whose evaluated value we use to replace the current focus."! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 TreeZipperNode class
@@ -49,6 +45,12 @@ TreeZipperNode class
 
 !TreeZipperNode class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 17:07'!
 path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rightCollection
+	^ self new
+		path: aTreeZipperTrail
+		value: anObject
+		leftNodes: leftCollection
+		rightNodes: rightCollection.! !
+ect leftNodes: leftCollection rightNodes: rightCollection
 	^ self new
 		path: aTreeZipperTrail
 		value: anObject

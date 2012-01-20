@@ -25,10 +25,6 @@ change: aBlock
 focus
 	^ focus.! !
 
-!ListZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:24'!
-trail
-	^ trail.! !
-
 
 !ListZipper methodsFor: 'private' stamp: 'fbs 12/28/2010 16:36'!
 focus: aSeqColl trail: anotherSeqColl
@@ -60,3 +56,4 @@ ListZipper class
 !ListZipper class methodsFor: 'instance creation' stamp: 'fbs 12/28/2010 16:48'!
 on: aSequenceableCollection
 	^ self new focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
+ew focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
