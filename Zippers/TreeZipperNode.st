@@ -3,6 +3,15 @@ Object subclass: #TreeZipperNode
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
+!TreeZipperNode commentStamp: 'fbs 12/31/2010 18:37' prior: 0!
+I am a recursive structure that describes a path through a tree.
+
+  self path
+
+ refers to the previous position in the path, itself a TreeZipperNode. The first entry in a path has
+
+  self path == nil!
+
 
 !TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 00:19'!
 leftNodes
@@ -40,16 +49,6 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 		value: anObject
 		leftNodes: leftCollection
 		rightNodes: rightCollection.! !
-erNode methodsFor: 'accessing' stamp: 'fbs 12/20/2011 20:38'!
-parentNodes
-	^ visitedNodes! !
-
-!TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 16:22'!
-path
-	^ path.! !
-
-!TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 00:19'!
-rightNodes
 	^ rightNodes.! !
 
 
