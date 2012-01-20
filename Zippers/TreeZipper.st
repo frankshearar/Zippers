@@ -1,27 +1,42 @@
-BaseZipper subclass: #TreeZipper
-	instanceVariableNames: ''
+Object subclass: #TreeZipper
+	instanceVariableNames: 'focus trail'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
+!TreeZipper commentStamp: 'fbs 12/30/2010 22:08' prior: 0!
+I am a zipper for navigating over a variable-arity tree, that is a tree that may have any number of children per node.
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/17/2011 08:20'!
-children
-	^ self focus children! !
+That is, I allow one to navigate arbitrarily over a tre structure, and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 23:11'!
-isBranch
-	^ self focus children notEmpty! !
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:56'!
-isEmpty
-	^ focus isEmpty.! !
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:56'!
+down! !
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
-newFocusOn: anObject
-	^ self newFocusOn: anObject children: #().! !
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:40'!
+left! !
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
-newFocusOn: anObject children: aCollection
-	^ (anObject isKindOf: ZTree)
-		ifTrue: [ZTree value: anObject value children: aCollection]
-		ifFalse: [ZTree value: anObject children: aCollection].! !
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:41'!
+right! !
+
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:40'!
+up! !
+
+
+!TreeZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 22:06'!
+focus
+	^ focus.! !
+
+
+!TreeZipper methodsFor: 'private' stamp: 'fbs 12/30/2010 22:04'!
+focus: aTree trail: anOrderedCollection
+	focus := aTree.
+	trail := anOrderedCollection.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+TreeZipper class
+	instanceVariableNames: ''!
+
+!TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 22:04'!
+on: aTree
+	^ self new focus: aTree trail: OrderedCollection new.! !

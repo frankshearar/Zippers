@@ -1,16 +1,17 @@
-TreeTestCases subclass: #TreeZipperTest
+TestCase subclass: #TreeZipperTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Tests'!
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 2/25/2011 17:36'!
-emptyTree
-	^ ZTree empty.! !
-
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/31/2010 18:21'!
-flatTree
-	" Best viewed in a monospaced font:
+!TreeZipperTest methodsFor: 'testing - instance creation' stamp: 'fbs 12/30/2010 22:08'!
+testOn
+	| tree zipper |
+	tree := Object new.
+	zipper := TreeZipper on: tree.
+	
+	self assert: zipper focus = tree.! !
+ospaced font:
 	       1
 	   / / | \ \
 	  2 3  4 5 6"
