@@ -101,7 +101,7 @@ safeRight
 		
 	^ {success. zipper.}! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 4/30/2011 22:33'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 6/6/2011 12:11'!
 safeUp
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -111,8 +111,8 @@ safeUp
 	
 	zipper := (success = #success)
 		ifTrue: [ self class new
-			focus: (ZTree
-				value: trail value
+			focus: (self
+				newFocusOn: trail value
 				children: trail leftNodes reverse, {focus} , trail rightNodes)
 			trail: trail path ]
 		ifFalse: [ self ].
@@ -160,31 +160,41 @@ move: directionSelector orElse: aBlock
 		ifTrue: [ move second ]
 		ifFalse: [ aBlock cull: self focus ].! !
 
+!TreeZipper methodsFor: 'private' stamp: 'fbs 6/6/2011 12:08'!
+newFocusOn: anObject
+	^ ZTree value: anObject children: #().! !
+
+!TreeZipper methodsFor: 'private' stamp: 'fbs 6/6/2011 12:06'!
+newFocusOn: anObject children: aCollection
+	^ ZTree value: anObject children: aCollection.! !
+
 
 !TreeZipper methodsFor: 'mutating' stamp: 'fbs 2/9/2011 09:15'!
 change: aBlock
 	"aBlock is a unary block whose evaluated value we use to replace the current focus."
 	^ self changeTo: (aBlock value: focus value).! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:32'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 6/6/2011 12:06'!
 changeTo: newValue
-	^ TreeZipper new
-		focus: (ZTree
-			value: newValue
-			children: focus children)
+	| children |
+	children := (focus respondsTo: #children)
+		ifTrue: [focus children]
+		ifFalse: [#()].
+	^ self class new
+		focus: (self newFocusOn: newValue children: children)
 		trail: trail.! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 17:17'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 6/6/2011 12:07'!
 delete
 	trail ifNil: [^ ZipperNavigation signal: 'Delete at top'].
 	
 	(trail leftNodes isEmpty and: [trail rightNodes isEmpty]) ifTrue:
-		[^ TreeZipper new
-			focus: (ZTree value: trail value) 
+		[^ self class new
+			focus: (self newFocusOn: trail value) 
 			trail: trail path].
 			
 	trail leftNodes isEmpty ifTrue:
-		[^ TreeZipper new
+		[^ self class new
 			focus: trail rightNodes first
 			trail: (TreeZipperNode
 				path: trail path
@@ -192,7 +202,7 @@ delete
 				leftNodes: trail leftNodes
 				rightNodes: trail rightNodes allButFirst)].
 			
-	^ TreeZipper new
+	^ self class new
 		focus: trail leftNodes first
 		trail: (TreeZipperNode
 			path: trail path
@@ -200,38 +210,38 @@ delete
 			leftNodes: trail leftNodes allButFirst
 			rightNodes: trail rightNodes).! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/28/2011 22:28'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 6/6/2011 12:09'!
 insertDown: anObject
 	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tree: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
 
 	^ focus isEmpty
 		ifTrue: [self changeTo: anObject ]
-		ifFalse: [ TreeZipper new
+		ifFalse: [ self class new
 			focus: (anObject = ZTree empty
 				ifTrue: [ ZTree empty ]
-				ifFalse: [ ZTree value: anObject ])
+				ifFalse: [ self newFocusOn: anObject ])
 			trail: (TreeZipperNode
 				path: trail
 				value: focus value
 				leftNodes: OrderedCollection new
 				rightNodes: focus children) ]! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 17:05'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 6/6/2011 12:10'!
 insertLeft: anObject
 	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
-	^ TreeZipper new
-		focus: (ZTree value: anObject)
+	^ self class new
+		focus: (self newFocusOn: anObject)
 		trail: (TreeZipperNode
 			path: trail path
 			value: trail value
 			leftNodes: trail leftNodes
 			rightNodes: (trail rightNodes copy addFirst: focus; yourself))! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 17:06'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 6/6/2011 12:10'!
 insertRight: anObject
 	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
-	^ TreeZipper new
-		focus: (ZTree value: anObject)
+	^ self class new
+		focus: (self newFocusOn: anObject)
 		trail: (TreeZipperNode
 			path: trail path
 			value: trail value
@@ -239,9 +249,9 @@ insertRight: anObject
 			rightNodes: trail rightNodes)! !
 
 
-!TreeZipper methodsFor: 'copying' stamp: 'fbs 2/16/2011 07:45'!
+!TreeZipper methodsFor: 'copying' stamp: 'fbs 6/6/2011 10:28'!
 copy
-	^ TreeZipper new
+	^ self class new
 		focus: self focus
 		trail: self trail.! !
 
@@ -258,5 +268,3 @@ TreeZipper class
 !TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
 	^ self new focus: aTree trail: nil.! !
-e trail: nil.! !
- trail: nil.! !
