@@ -25,9 +25,10 @@ down
 				leftNodes: OrderedCollection new
 				rightNodes: focus children allButFirst).! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:54'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 18:50'!
 left
-	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
+	trail ifNil: [^ ZipperNavigation signal: 'Left at the root node'].
+	trail leftNodes ifEmpty: [^ ZipperNavigation signal: 'Left at left-most sibling node'].
 	
 	^ TreeZipper new
 		focus: trail leftNodes first
@@ -37,9 +38,10 @@ left
 			leftNodes: (trail leftNodes allButFirst)
 			rightNodes: (trail rightNodes addFirst: focus; yourself)).! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:34'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 18:50'!
 right
-	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
+	trail ifNil: [^ ZipperNavigation signal: 'Right at the root node'].
+	trail rightNodes ifEmpty: [^ ZipperNavigation signal: 'Right at the right-most sibling node'].
 	
 	^ TreeZipper new
 		focus: trail rightNodes first
@@ -69,6 +71,16 @@ focus
 focus: aTree trail: aTreeZipperNode
 	focus := aTree.
 	trail := aTreeZipperNode.! !
+
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 18:42'!
+change: aBlock
+	"aBlock is a unary block whose evaluated value we use to replace the current focus."
+	^ TreeZipper new
+		focus: (ZTree
+			value: (aBlock value: focus value)
+			children: focus children)
+		trail: trail.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 

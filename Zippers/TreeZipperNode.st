@@ -37,6 +37,11 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 	leftNodes := leftCollection.
 	rightNodes := rightCollection.! !
 
+
+!TreeZipperNode methodsFor: 'mutating' stamp: 'fbs 12/31/2010 18:41'!
+change: aBlock
+	"aBlock is a unary block whose evaluated value we use to replace the current focus."! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 TreeZipperNode class
@@ -49,15 +54,7 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 		value: anObject
 		leftNodes: leftCollection
 		rightNodes: rightCollection.! !
-	^ rightNodes.! !
-
-
-!TreeZipperNode methodsFor: 'testing' stamp: 'fbs 10/18/2011 16:20'!
-isEnd
-	^ false.! !
-
-
-!TreeZipperNode methodsFor: 'private' stamp: 'fbs 12/20/2011 20:36'!
+'!
 path: aTreeZipperTrail leftNodes: leftCollection rightNodes: rightCollection parentNodes: someObjects changed: aBoolean
 	path := aTreeZipperTrail.
 	leftNodes := leftCollection.

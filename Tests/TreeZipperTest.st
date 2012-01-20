@@ -78,6 +78,15 @@ testDownOnNonEmptyTreeFocusesOnFirstSibling
 	
 	self assert: zipper focus = tree children first.! !
 
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:48'!
+testLeftAtLeftmostNodeSignalsException
+	| zipper |
+	zipper := (TreeZipper on: self triangleTree) down.
+	
+	self
+		should: [zipper left]
+		raise: ZipperNavigation.! !
+
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:29'!
 testLeftAtRootNodeSignalsException
 	| zipper |
@@ -98,6 +107,15 @@ testLeftMovesToLeftSibling
 
 	zipper := zipper left.
 	self assert: zipper focus value = 2 description: 'Left didn''t go left'.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:49'!
+testRightAtRightmostNodeSignalsException
+	| zipper |
+	zipper := (TreeZipper on: self triangleTree) down right.
+	
+	self
+		should: [zipper right]
+		raise: ZipperNavigation.! !
 
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:29'!
 testRightAtRootNodeSignalsException
@@ -144,30 +162,20 @@ testUpReturnsToParentNode
 	zipper := zipper up.
 	
 	self assert: zipper focus = tree.! !
-zipper |
-	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
-	zipper := tree zipper down.
-	self assert: zipper focus value = 2.
-	zipper := zipper delete.
-	
-	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
-	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3. ZTree value: 4}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:32'!
-testDeleteOnlyLeafNode
-	| tree zipper |
-	tree := ZTree value: 1 children: {ZTree value: 2}.
-	zipper := tree zipper down delete.
-	
-	self assert: zipper root = (ZTree value: 1).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:15'!
-testDeleteYoungerSiblingFocusesOnOlderSibling
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 18:47'!
+testChangeReplacesValue
 	| tree zipper |
-	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
-	zipper := tree zipper down right.
-	self assert: zipper focus value = 3.
-	zipper := zipper delete.
+	tree := self triangleTree.
+	zipper := (TreeZipper on: tree) down.
+	
+	zipper := zipper change: [ :i | i + 1].
+	self assert: zipper focus value = 3 description: 'No change made'.
+	self assert: zipper right focus value = 3 description: 'Position changed'.
+	self assert: zipper up focus value = 1 description: 'Position changed'.
+	! !
+zipper := zipper delete.
 	
 	self assert: zipper focus value = 2 description: 'Zipper focused on wrong sibling'.
 	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 4}) description: 'Wrong thing deleted'.! !
