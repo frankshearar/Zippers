@@ -12,6 +12,10 @@ changed
 leftNodes
 	^ #()! !
 
+!TreeZipperNodeEndContext methodsFor: 'accessing' stamp: 'fbs 12/20/2011 20:39'!
+parentNodes
+	^ #().! !
+
 !TreeZipperNodeEndContext methodsFor: 'accessing' stamp: 'fbs 11/1/2011 07:59'!
 path
 	"This lets us avoid unsightly conditionals in the zipper: the path of no path is no path. Zipping up isn't a problem because #safeUp checks #isEnd."
@@ -21,11 +25,8 @@ path
 rightNodes
 	^ #()! !
 
-!TreeZipperNodeEndContext methodsFor: 'accessing' stamp: 'fbs 10/18/2011 16:26'!
-visitedNodes
-	^ #().! !
-
 
 !TreeZipperNodeEndContext methodsFor: 'testing' stamp: 'fbs 10/18/2011 16:20'!
 isEnd
 	^ true.! !
+
