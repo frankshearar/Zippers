@@ -3,8 +3,8 @@ Object subclass: #MutableZTree
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
-!MutableZTree commentStamp: 'fbs 4/27/2011 22:21' prior: 0!
-I implement a mutable version of ZTree. My sole reason for being is to provide a boundary within which mutable stuff can happen... like rebalancing a tree using the DSW algorithm.!
+!MutableZTree commentStamp: 'fbs 4/28/2011 07:52' prior: 0!
+I implement a mutable version of ZTree. My sole reason for being is to provide a boundary within which mutable stuff can happen... like rebalancing a tree using the Day/Stout/Warren algorithm.!
 
 
 !MutableZTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 17:30'!
@@ -19,38 +19,37 @@ asImmutableTree
 				ifNil: [ZTree empty]
 				ifNotNil: [each asImmutableTree]]).! !
 
-!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 17:31'!
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 07:49'!
 balance
 	"Return myself, only balanced. Use the DSW algorithm."
 	| pseudoroot size |
 	pseudoroot := MutableZTree new
 		right: self;
 		yourself.
-	size := self asVine: pseudoroot.
-	pseudoroot := self asTree: pseudoroot ofSize: size.
+	size := pseudoroot asVine.
+	pseudoroot asTreeOfSize: size.
 	^ pseudoroot right.! !
 
 
-!MutableZTree methodsFor: 'private' stamp: 'fbs 4/27/2011 14:48'!
-asTree: root ofSize: size
+!MutableZTree methodsFor: 'private' stamp: 'fbs 4/28/2011 07:49'!
+asTreeOfSize: size
 	"Convert my vine-self to a balanced tree."
 	| sz leafCount internalNodeExp |
 	internalNodeExp := ((size + 1) ln / 2 ln) floor.
 	sz := size.
 	
 	leafCount := size + 1 - (2 raisedTo: internalNodeExp).
-	self compress: root numbering: leafCount.
+	self compressTimes: leafCount.
 	sz := sz - leafCount.
 	[sz > 1] whileTrue:
-		[self compress: root numbering: sz / 2.
-		sz := sz / 2].
-	^ root.! !
+		[self compressTimes: sz / 2.
+		sz := sz / 2].! !
 
-!MutableZTree methodsFor: 'private' stamp: 'fbs 4/26/2011 22:22'!
-asVine: root
+!MutableZTree methodsFor: 'private' stamp: 'fbs 4/28/2011 07:46'!
+asVine
 	"The first half of the DSW algorithm. Turn self into a vine, and return the number of nodes in the vine."
 	| vineTail remainder tempPtr size |
-	vineTail := root.
+	vineTail := self.
 	remainder := vineTail right.
 	size := 0.
 	[ remainder notNil ] whileTrue:
@@ -68,10 +67,10 @@ asVine: root
 	
 	^ size.! !
 
-!MutableZTree methodsFor: 'private' stamp: 'fbs 4/27/2011 15:18'!
-compress: root numbering: count
+!MutableZTree methodsFor: 'private' stamp: 'fbs 4/28/2011 07:47'!
+compressTimes: count
 	| scanner child |
-	scanner := root.
+	scanner := self.
 	1 to: count do:
 		[:i | child := scanner right.
 		scanner right: child right.
@@ -123,6 +122,7 @@ initialize
 !MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
 printString
 	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
+ ' ', (self left printString), ' ', (self right printString), ')'! !
 7:41'!
 printString
 	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
