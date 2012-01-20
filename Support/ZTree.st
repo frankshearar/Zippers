@@ -140,10 +140,10 @@ balance
 	"Return a balanced copy of self."
 	^ self asOrderedCollection asBalancedBinaryTree.! !
 
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:09'!
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 20:54'!
 balanceDSW
 	"Return a balanced copy of self."
-	^ self asMutableTree balance asImmutableTreeOfType: ZBinaryTree.! !
+	^ self asMutableTree balance asImmutableTreeOfType: ZTree.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -165,6 +165,7 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
+n.! !
 !
 
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
