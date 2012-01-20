@@ -41,7 +41,7 @@ root
 		ifNil: [focus]
 		ifNotNil: [self up root]! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/25/2011 08:11'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/28/2011 22:45'!
 safeDown
 	"Return a pair whose first element tells us whether we successfully went down (represented by the value #success), and a Zipper. If yes, a Zipper focusing on the first child element of this node. If not, a Zipper focused on where we are."
 	| success zipper |
@@ -57,10 +57,10 @@ safeDown
 					value: focus value
 					leftNodes: OrderedCollection new
 					rightNodes: focus children allButFirst)
-		] ifFalse: [self copy].
+		] ifFalse: [ self ].
 	^ {success. zipper.}! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/25/2011 08:11'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/28/2011 22:46'!
 safeLeft
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -77,10 +77,10 @@ safeLeft
 				value: trail value
 				leftNodes: (trail leftNodes allButFirst)
 				rightNodes: (trail rightNodes addFirst: focus; yourself))]
-		ifFalse: [ self copy ].
+		ifFalse: [ self ].
 	^ {success. zipper.}! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/25/2011 08:11'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/28/2011 22:46'!
 safeRight
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -97,11 +97,11 @@ safeRight
 				value: trail value
 				leftNodes: (trail leftNodes addFirst: focus; yourself)
 				rightNodes: trail rightNodes allButFirst) ]
-		ifFalse: [ self copy ].
+		ifFalse: [ self ].
 		
 	^ {success. zipper.}! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/25/2011 08:11'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/28/2011 22:46'!
 safeUp
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -115,7 +115,7 @@ safeUp
 				value: trail value
 				children: trail leftNodes reverse, focus asOrderedCollection, trail rightNodes)
 			trail: trail path ]
-		ifFalse: [ self copy ].
+		ifFalse: [ self ].
 		
 	^ {success. zipper.}! !
 
@@ -258,3 +258,4 @@ TreeZipper class
 !TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
 	^ self new focus: aTree trail: nil.! !
+ee trail: nil.! !
