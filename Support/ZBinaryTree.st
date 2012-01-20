@@ -7,8 +7,13 @@ ZTree subclass: #ZBinaryTree
 I am a binary tree - that is, I have two children nodes. Further, I always have two children nodes, even if some of those are empty (== ZTree empty).!
 
 
-!ZBinaryTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 13:00'!
+!ZBinaryTree methodsFor: 'converting' stamp: 'fbs 4/29/2011 10:01'!
 balance
+	"Return a balanced copy of self."
+	^ self asOrderedCollection asBalancedBinaryTree.! !
+
+!ZBinaryTree methodsFor: 'converting' stamp: 'fbs 4/29/2011 10:01'!
+balanceDSW
 	"Return a balanced copy of self."
 	^ self asMutableTree balance asImmutableTreeOfType: ZBinaryTree.! !
 

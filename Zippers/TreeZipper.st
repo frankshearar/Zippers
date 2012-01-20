@@ -200,9 +200,9 @@ delete
 			leftNodes: trail leftNodes allButFirst
 			rightNodes: trail rightNodes).! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 2/25/2011 17:52'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/28/2011 22:28'!
 insertDown: anObject
-	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tre: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
+	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tree: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
 
 	^ focus isEmpty
 		ifTrue: [self changeTo: anObject ]
@@ -258,4 +258,4 @@ TreeZipper class
 !TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
 	^ self new focus: aTree trail: nil.! !
-ee trail: nil.! !
+e trail: nil.! !

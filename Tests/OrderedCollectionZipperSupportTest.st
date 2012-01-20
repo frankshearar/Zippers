@@ -8,23 +8,24 @@ TestCase subclass: #OrderedCollectionZipperSupportTest
 testEmptyCollectionAsBalancedBinaryTreeIsEmptyTree
 	self assert: #() asBalancedBinaryTree == ZTree empty.! !
 
-!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/30/2011 17:13'!
+!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/29/2011 09:53'!
 testEvenCollectionAsBalancedBinaryTreeIsEmptyTree
 	| expected |
-	expected := ZTree
+	expected := ZBinaryTree
 		value: 2
-		children: {ZTree value: 1.
-		ZTree value: 3 children: {ZTree empty. ZTree value: 4}}.
+		left: (ZBinaryTree value: 1)
+		right: (ZBinaryTree value: 3 right: (ZBinaryTree value: 4)).
 	self assert: #(1 2 3 4) asBalancedBinaryTree = expected.! !
 
-!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/30/2011 17:13'!
+!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 23:24'!
 testOddCollectionAsBalancedBinaryTreeIsEmptyTree
 	| expected |
-	expected := ZTree
+	expected := ZBinaryTree
 		value: 2
-		children: {ZTree value: 1. ZTree value: 3}.
+		left: (ZBinaryTree value: 1)
+		right: (ZBinaryTree value: 3).
 	self assert: #(1 2 3) asBalancedBinaryTree = expected.! !
 
-!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/30/2011 17:13'!
+!OrderedCollectionZipperSupportTest methodsFor: 'testing - converting' stamp: 'fbs 4/29/2011 09:54'!
 testSingleCollectionAsBalancedBinaryTreeIsSingleNode
-	self assert: #(0) asBalancedBinaryTree = (ZTree value: 0).! !
+	self assert: #(0) asBalancedBinaryTree = (ZBinaryTree value: 0).! !

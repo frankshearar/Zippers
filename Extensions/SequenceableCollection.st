@@ -3,14 +3,13 @@
 asBalancedBinaryTree
 	^ self asBalancedBinaryTreeFrom: 1 to: self size.! !
 
-!SequenceableCollection methodsFor: '*Zippers' stamp: 'fbs 4/30/2011 17:11'!
+!SequenceableCollection methodsFor: '*Zippers' stamp: 'fbs 4/29/2011 09:53'!
 asBalancedBinaryTreeFrom: startIdx to: endIdx
 	| mid |
 	(startIdx > endIdx) ifTrue: [ ^ ZTree empty ].
-	(startIdx = endIdx) ifTrue: [ ^ ZTree value: (self at: startIdx) ].
+	(startIdx = endIdx) ifTrue: [ ^ ZBinaryTree value: (self at: startIdx) ].
 	
 	mid := ((startIdx + endIdx) / 2) floor.
-	^ ZTree value: (self at: mid)
-		children:
-			{self asBalancedBinaryTreeFrom: startIdx to: mid - 1.
-			self asBalancedBinaryTreeFrom: mid + 1 to: endIdx.}.! !
+	^ ZBinaryTree value: (self at: mid)
+		left: (self asBalancedBinaryTreeFrom: startIdx to: mid - 1)
+		right: (self asBalancedBinaryTreeFrom: mid + 1 to: endIdx).! !
