@@ -4,7 +4,12 @@ DepthTraversal subclass: #InOrderTraversal
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
 
-!InOrderTraversal methodsFor: 'as yet unclassified' stamp: 'fbs 2/24/2011 22:42'!
+!InOrderTraversal methodsFor: 'private' stamp: 'fbs 2/25/2011 10:18'!
+depthFirstTraversal: aZipper doing: aBlock
+	^ (self collect: [:each | each] using: aZipper) do: aBlock.! !
+
+
+!InOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/24/2011 22:42'!
 collect: aBlock using: aZipper
 	"A naive depth-first traversal. It fails in the presence of cycles."
 	| left move right value |
@@ -25,11 +30,7 @@ collect: aBlock using: aZipper
 		add: value;
 		addAll: right;
 		yourself.! !
-
-
-!InOrderTraversal methodsFor: 'private' stamp: 'fbs 2/25/2011 10:18'!
-depthFirstTraversal: aZipper doing: aBlock
-	^ (self collect: [:each | each] using: aZipper) do: aBlock.! !
+ock.! !
 s: aBlock using: move second]
 		ifFalse: [ #() asOrderedCollection ].
 

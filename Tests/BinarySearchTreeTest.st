@@ -55,13 +55,15 @@ testWithReturnsSingleNodeTree
 	bst := BinarySearchTree with: value.
 	self assert: (bst collect: [:each | each]) = #(1) asOrderedCollection.
 	! !
- := BinarySearchTree tree: ZTree empty.
-	"Construct a degenerate BST."
-	1 to: 10 do: [:i | bst := bst add: i].
-	
-	zipper := bst rebalanced zipper.
-	self assert: zipper root isBalanced.
-	self assert: (1 to: 10) asOrderedCollection = (InOrderTraversal new collect: #yourself using: zipper) asOrderedCollection.! !
+
+
+!BinarySearchTreeTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/26/2011 22:50'!
+testCollectExecutesBlockOncePerNode
+	| items t |
+	t := ((BinarySearchTree with: 2) add: 3) add: 1.
+	items := t collect: [:each | each * 2].
+	self assert: items = (#(1 2 3) * 2) asOrderedCollection.! !
+rderedCollection.! !
 
 
 !BinarySearchTreeTest methodsFor: 'testing - instance creation' stamp: 'fbs 2/24/2011 22:52'!

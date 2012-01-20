@@ -45,6 +45,6 @@ triangleTree
 TreeTestCases class
 	instanceVariableNames: ''!
 
-!TreeTestCases class methodsFor: 'testing' stamp: 'fbs 2/25/2011 08:07'!
+!TreeTestCases class methodsFor: 'testing' stamp: 'fbs 2/26/2011 22:55'!
 isAbstract
 	^ self name = #TreeTestCases.! !

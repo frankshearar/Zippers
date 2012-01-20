@@ -57,6 +57,6 @@ testTreeTraversalCallsBlock
 TraversalTestCase class
 	instanceVariableNames: ''!
 
-!TraversalTestCase class methodsFor: 'testing' stamp: 'fbs 2/25/2011 08:07'!
+!TraversalTestCase class methodsFor: 'testing' stamp: 'fbs 2/26/2011 22:55'!
 isAbstract
 	^ self name = #TraversalTestCase.! !

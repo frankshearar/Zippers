@@ -13,11 +13,11 @@ add: aComparableObject
 	^ BinarySearchTree tree: (self add: aComparableObject to: tree zipper)! !
 
 
-!BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/25/2011 21:32'!
+!BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/25/2011 22:56'!
 add: anObject to: aZipper
 	"If we're at a leaf node, and <, insertDown."
 	"If we're not at a leaf node, move further into the tree."
-	| currentValue insertPoint move |
+	| currentValue leftChild move |
 	aZipper focus isEmpty ifTrue: [ ^ (aZipper insertDown: anObject) root ].
 	
 	currentValue := aZipper focus value.
@@ -25,20 +25,19 @@ add: anObject to: aZipper
 	"Move down to the left subnode."
 	move := aZipper safeDown.
 	move first = #success ifFalse:
-		["Leaf node"
+		["Leaf node. If adding a right subtree, add the empty tree as a left subtree."
 		^ (anObject < currentValue
 			ifTrue: [ aZipper insertDown: anObject ]
 			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: anObject ]) root ].
-	
-	
-	insertPoint := move second.
+
+	leftChild := move second.
 	
 	"If less than, add to the left subtree."
 	anObject < currentValue
-		ifTrue: [ ^ self add: anObject to: insertPoint ].
+		ifTrue: [ ^ self add: anObject to: leftChild ].
 		
 	"Otherwise, add to the right subtree."
-	move := insertPoint safeRight.
+	move := leftChild safeRight.
 	^ self add: anObject to: move second.! !
 
 !BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/21/2011 22:12'!
@@ -51,11 +50,9 @@ asOrderedCollection
 	^ self collect: [:each | each ].! !
 
 
-!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/24/2011 22:37'!
+!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/26/2011 22:53'!
 collect: aBlock
-	| traversal |
-	traversal := InOrderTraversal new collect: aBlock using: tree zipper.
-	^ traversal collect: aBlock.! !
+	^ InOrderTraversal new collect: aBlock using: tree zipper.! !
 
 
 !BinarySearchTree methodsFor: 'initialize-release' stamp: 'fbs 2/24/2011 17:33'!
@@ -79,6 +76,7 @@ tree: aTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 2/23/2011 21:04'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
+
 e methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:30'!
 collect: aBlock
 	^ tree collect: aBlock.! !
