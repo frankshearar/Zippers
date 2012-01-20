@@ -112,13 +112,13 @@ expectedFailures
 	testAsDotFileOfSingleNodeTreeShowsEmptyGraph)! !
 
 
-!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 07:45'!
+!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 21:33'!
 testAsMutableTreeEmptyTree
 	| t |
 	t := ZTree empty.
-	self assert: t asMutableTree isNil.! !
+	self assert: t asMutableTree isEmpty.! !
 
-!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 07:55'!
+!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 20:59'!
 testAsMutableTreeMultipleChildren
 	| t |
 	t := (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}) asMutableTree.
@@ -126,46 +126,46 @@ testAsMutableTreeMultipleChildren
 	self assert: t value = 0.
 	self assert: t left notNil.
 	self assert: t left value = 1.
-	self assert: t left left isNil.
-	self assert: t left right isNil.
-	self assert: t right notNil.
+	self assert: t left left isEmpty.
+	self assert: t left right isEmpty.
+	self deny: t right isEmpty.
 	self assert: t right value = 2.
-	self assert: t right left isNil.
-	self assert: t right right isNil.! !
+	self assert: t right left isEmpty.
+	self assert: t right right isEmpty.! !
 
-!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 07:53'!
+!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 20:59'!
 testAsMutableTreeSingleChildLeft
 	| t |
 	t := (ZTree value: 0 children: {ZTree value: 1}) asMutableTree.
 	self assert: t notNil.
 	self assert: t value = 0.
-	self assert: t left notNil.
+	self deny: t left isEmpty.
 	self assert: t left value = 1.
-	self assert: t left left isNil.
-	self assert: t left right isNil.
-	self assert: t right isNil.! !
+	self assert: t left left isEmpty.
+	self assert: t left right isEmpty.
+	self assert: t right isEmpty.! !
 
-!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 17:47'!
+!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 21:20'!
 testAsMutableTreeSingleChildRight
 	| t |
 	t := (ZTree value: 0 children: {ZTree empty. ZTree value: 1}) asMutableTree.
-	self assert: t notNil.
+	self deny: t isEmpty.
 	self assert: t value = 0.
-	self assert: t left isNil.
-	self assert: t right notNil.
+	self assert: t left isEmpty.
+	self deny: t right isEmpty.
 	self assert: t right value = 1.
-	self assert: t right left isNil.
-	self assert: t right right isNil.! !
+	self assert: t right left isEmpty.
+	self assert: t right right isEmpty.! !
 
-!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 07:47'!
+!ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 21:20'!
 testAsMutableTreeSingleNode
 	| t |
 	t := (ZTree value: 0) asMutableTree.
-	self assert: t notNil.
+	self deny: t isEmpty.
 	self assert: t value = 0.
-	self assert: t left isNil.
-	self assert: t right isNil.! !
-EqualsUnequalTreesInChildrenReturnsFalse
+	self assert: t left isEmpty.
+	self assert: t right isEmpty.! !
+hildrenReturnsFalse
 	| a b |
 	a := ZTree value: 1 children: {ZTree value: 2}.
 	b := ZTree value: 1 children: {ZTree value: 1}.

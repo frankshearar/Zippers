@@ -103,11 +103,11 @@ isEmpty
 	^ false.! !
 
 
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 17:31'!
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 21:21'!
 asMutableTree
 	"Return a mutable copy of this tree."
 	| mutableCopy |
-	self isEmpty ifTrue: [^nil].
+	self isEmpty ifTrue: [^ZTree empty].
 
 	mutableCopy := MutableZTree new.
 	mutableCopy value: self value.
@@ -134,7 +134,7 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
-ass methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
+odsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
 !

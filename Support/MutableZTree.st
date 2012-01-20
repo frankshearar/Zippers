@@ -11,7 +11,7 @@ I implement a mutable version of ZTree. My sole reason for being is to provide a
 asImmutableTree
 	^ self asImmutableTreeOfType: ZTree.! !
 
-!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 12:48'!
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 21:26'!
 asImmutableTreeOfType: aClass
 	"Return an immutable version of self."
 	self children isEmpty ifTrue: [^ aClass value: self value].
@@ -21,7 +21,7 @@ asImmutableTreeOfType: aClass
 		children: (self children
 			collect: [:each | each
 				ifNil: [ZTree empty]
-				ifNotNil: [each asImmutableTree]]).! !
+				ifNotNil: [each asImmutableTreeOfType: aClass]]).! !
 
 !MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 07:49'!
 balance
@@ -49,15 +49,15 @@ asTreeOfSize: size
 		[self compressTimes: sz / 2.
 		sz := sz / 2].! !
 
-!MutableZTree methodsFor: 'private' stamp: 'fbs 4/28/2011 07:46'!
+!MutableZTree methodsFor: 'private' stamp: 'fbs 4/28/2011 21:33'!
 asVine
 	"The first half of the DSW algorithm. Turn self into a vine, and return the number of nodes in the vine."
 	| vineTail remainder tempPtr size |
 	vineTail := self.
 	remainder := vineTail right.
 	size := 0.
-	[ remainder notNil ] whileTrue:
-		[remainder left isNil
+	[ remainder isEmpty ] whileFalse:
+		[(remainder left isEmpty)
 			ifTrue: "move vineTail down one"
 				[vineTail := remainder.
 				remainder := remainder right.
@@ -87,9 +87,9 @@ compressTimes: count
 children
 	^ children.! !
 
-!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/27/2011 07:37'!
+!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/28/2011 20:57'!
 left
-	^ children at: 1 ifAbsent: [nil].! !
+	^ children at: 1 ifAbsent: [ZTree empty].! !
 
 !MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/27/2011 12:14'!
 left: aMutableBinaryNode
@@ -97,14 +97,14 @@ left: aMutableBinaryNode
 		ifEmpty: [children addLast: aMutableBinaryNode]
 		ifNotEmpty: [children at: 1 put: aMutableBinaryNode]! !
 
-!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/27/2011 07:37'!
+!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/28/2011 20:57'!
 right
-	^ children at: 2 ifAbsent: [nil].! !
+	^ children at: 2 ifAbsent: [ZTree empty].! !
 
-!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/27/2011 12:16'!
+!MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/28/2011 20:57'!
 right: aMutableBinaryNode
 	"If you set right before left, you need to make sure you set left to nil before continuing."
-	[children size < 2] whileTrue: [children addLast: nil].
+	[children size < 2] whileTrue: [children addLast: ZTree empty].
 	children at: 2 put: aMutableBinaryNode.! !
 
 !MutableZTree methodsFor: 'accessing' stamp: 'fbs 4/26/2011 21:43'!
@@ -126,4 +126,4 @@ initialize
 !MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
 printString
 	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
-tString), ' ', (self right printString), ')'! !
+! !
