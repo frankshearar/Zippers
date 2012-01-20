@@ -22,6 +22,27 @@ initialize
 	children := OrderedCollection new.! !
 
 
+!ZTree methodsFor: 'printing' stamp: 'fbs 4/24/2011 12:33'!
+asDotFile
+	| join |
+	join := [:c | c
+			ifEmpty: ['']
+			ifNotEmpty: [ c reduce: [:s :e | s, ';', Character cr, e ]]].
+
+	^ 'digraph {', Character cr,
+		self printChildRecords, Character cr,
+		(join value: (self associations collect: #printString)), Character cr,
+		'}'! !
+
+!ZTree methodsFor: 'printing' stamp: 'fbs 4/24/2011 20:56'!
+asDotNode
+	| labels labelString |
+	labels := OrderedCollection new.
+	(1 to: self children size do: [:i | labels addLast: '<p', i printString, '>']).
+	labelString := labels ifEmpty: ['']
+		ifNotEmpty: ['[label = "', (labels reduce: [:acc :each | acc , ' | ']), '"]'].
+	^ '"node', self value printString, labelString, ';'! !
+
 !ZTree methodsFor: 'printing' stamp: 'fbs 12/30/2010 23:54'!
 printString
 	^ '(', self value printString,
@@ -29,61 +50,6 @@ printString
 			ifEmpty: ['']
 			ifNotEmpty: [' ', (self children reduce: [:a :b | a printString, ', ', b printString])]),
 		')'.! !
-
-
-!ZTree methodsFor: 'private' stamp: 'fbs 12/31/2010 16:54'!
-value: anObject children: aCollection
-	value := anObject.
-	children := aCollection asOrderedCollection.! !
-
-
-!ZTree methodsFor: 'comparing' stamp: 'fbs 12/31/2010 00:08'!
-= anObject
-	^ anObject class == self class and:
-		[self value = anObject value and:
-			[self children = anObject children]].! !
-
-
-!ZTree methodsFor: 'enumerating' stamp: 'fbs 12/31/2010 19:21'!
-zipper
-	^ TreeZipper on: self.! !
-
-
-!ZTree methodsFor: 'testing' stamp: 'fbs 2/24/2011 17:26'!
-isEmpty
-	^ false.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-ZTree class
-	instanceVariableNames: ''!
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/22/2011 21:41'!
-empty
-	^ Empty ifNil: [Empty := ZEmptyTree new].! !
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
-value: anObject
-	^ anObject = ZTree empty
-		ifTrue: [ ZTree empty ]
-		ifFalse: [ self new
-			value: anObject
-			children: OrderedCollection new ]! !
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
-value: anObject children: aCollection
-	^ self new value: anObject children: aCollection.! !
-Collection asBalancedBinaryTree.! !
-
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 21:18'!
-balanceDSW
-	"Return a balanced copy of self."
-	^ self asMutableTree balance asImmutableTree.! !
-
-!ZTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:16'!
-balanceDSW2
-	"Return a balanced copy of self."
-	^ self asMutableTree balance asImmutableTree2.! !
 
 
 !ZTree methodsFor: 'private' stamp: 'fbs 4/24/2011 10:35'!
@@ -120,33 +86,60 @@ value: anObject children: aCollection
 	children := aCollection asOrderedCollection.! !
 
 
-!ZTree methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:33'!
-children
-	^ children! !
+!ZTree methodsFor: 'comparing' stamp: 'fbs 4/27/2011 17:49'!
+= anObject
+	^ anObject class == self class and:
+		[self value = anObject value and:
+			[self childrenEqual: anObject children]].! !
 
-!ZTree methodsFor: 'accessing' stamp: 'fbs 12/31/2010 16:54'!
-value
-	^ value.! !
-
-
-!ZTree methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:29'!
-collect: aBlock
-	^ InOrderTraversal new traverse: self collecting: aBlock.! !
 
 !ZTree methodsFor: 'enumerating' stamp: 'fbs 12/31/2010 19:21'!
 zipper
 	^ TreeZipper on: self.! !
 
 
-!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 17:28'!
-depth
-	self hasChildren ifFalse: [ ^ 1 ].
-	
-	^ 1 + (children collect: #depth) max.! !
+!ZTree methodsFor: 'testing' stamp: 'fbs 2/24/2011 17:26'!
+isEmpty
+	^ false.! !
 
-!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 15:32'!
-hasChildren
-	^ (children reject: #isEmpty) isEmpty not.! !
+
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 17:31'!
+asMutableTree
+	"Return a mutable copy of this tree."
+	| mutableCopy |
+	self isEmpty ifTrue: [^nil].
+
+	mutableCopy := MutableZTree new.
+	mutableCopy value: self value.
+	mutableCopy children addAll: (self children collect: #asMutableTree).
+	^ mutableCopy.! !
+
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/26/2011 22:15'!
+balance
+	"Return a balanced version of self."
+	^ self asMutableTree balance asImmutableTree.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+ZTree class
+	instanceVariableNames: ''!
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/22/2011 21:41'!
+empty
+	^ Empty ifNil: [Empty := ZEmptyTree new].! !
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
+value: anObject
+	^ anObject = ZTree empty
+		ifTrue: [ ZTree empty ]
+		ifFalse: [ self new
+			value: anObject
+			children: OrderedCollection new ]! !
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
+value: anObject children: aCollection
+	^ self new value: anObject children: aCollection.! !
+!
 
 !ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 17:31'!
 isBalanced

@@ -32,22 +32,21 @@ depthFirstTraversal: aZipper doing: aBlock
 			doing: aBlock."! !
 
 
-!PreOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/25/2011 17:44'!
-collect: aBlock using: aZipper
+!PreOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 4/24/2011 21:56'!
+collectNodes: aBlock using: aZipper
 	"A naive depth-first traversal. It fails in the presence of cycles."
 	| collected move value |
-	aZipper isEmpty ifTrue: [ ^ OrderedCollection new ].
+	aZipper focus isEmpty
+		ifTrue: [ collected := OrderedCollection new ]
+		ifFalse:
+			[value := aBlock value: aZipper focus.
+			move := aZipper safeDown.
 	
-	value := aBlock value: aZipper focus value.
-	move := aZipper safeDown.
-	collected := (move first = #success)
-		ifTrue: [ (self collect: aBlock using: move second) copy addFirst: value; yourself ]
-		ifFalse: [ { value } asOrderedCollection ].
+			collected := (move first = #success)
+				ifTrue: [ (self collectNodes: aBlock using: move second) copy addFirst: value; yourself ]
+				ifFalse: [ { value } asOrderedCollection ]].
 	
 	move := aZipper safeRight.
-	move first = #success ifTrue: [collected addAll: (self collect: aBlock using: move second)].
+	move first = #success ifTrue: [collected addAll: (self collectNodes: aBlock using: move second)].
 
 	^ collected.! !
-ck ])
-					doing: aBlock ])
-			doing: aBlock."! !

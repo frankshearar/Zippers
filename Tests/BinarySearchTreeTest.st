@@ -63,13 +63,18 @@ testCollectExecutesBlockOncePerNode
 	t := ((BinarySearchTree with: 2) add: 3) add: 1.
 	items := t collect: [:each | each * 2].
 	self assert: items = (#(1 2 3) * 2) asOrderedCollection.! !
-rderedCollection.! !
 
 
-!BinarySearchTreeTest methodsFor: 'testing - instance creation' stamp: 'fbs 2/24/2011 22:52'!
-testWithReturnsSingleNodeTree
-	| bst value |
-	value := 1.
-	bst := BinarySearchTree with: value.
-	self assert: (bst collect: [:each | each]) = #(1) asOrderedCollection.
-	! !
+!BinarySearchTreeTest methodsFor: 'testing - converting' stamp: 'fbs 4/27/2011 21:29'!
+testRebalance
+	| bst zipper |
+	bst := BinarySearchTree tree: ZTree empty.
+	"Construct a degenerate BST."
+	1 to: 10 do: [:i | bst := bst add: i].
+	
+	"We don't check the entire structure, but we know it should look like this:"
+	"(7 (4 (2 (1), (3)), (6 (5))), (9 (8), (10)))"
+	zipper := bst rebalanced zipper.
+	self assert: zipper value = 7.
+	self assert: zipper down value = 4.
+	self assert: zipper down right value = 9.! !

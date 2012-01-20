@@ -49,6 +49,10 @@ tree: aTree
 asOrderedCollection
 	^ (self collect: [:each | each ]) asOrderedCollection.! !
 
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 21:03'!
+rebalanced
+	^ self class tree: (tree asMutableTree balance asImmutableTree)! !
+
 
 !BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/28/2011 17:43'!
 collect: aBlock
@@ -65,6 +69,15 @@ zipper
 	"This lets me masquerade as a ZTree: PreOrderTraversal new traverse: aBST collecting: [:each | each * 2 ]."
 	^ tree zipper.! !
 
+
+!BinarySearchTree methodsFor: 'printing' stamp: 'fbs 4/24/2011 09:30'!
+asDotFile
+	^ tree asDotFile! !
+
+!BinarySearchTree methodsFor: 'printing' stamp: 'fbs 4/22/2011 22:13'!
+printString
+	^ tree printString.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 BinarySearchTree class
@@ -77,20 +90,7 @@ tree: aTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 2/23/2011 21:04'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-1 17:33'!
-initialize
-	tree := ZTree empty.! !
 
-
-!BinarySearchTree methodsFor: 'accessing' stamp: 'fbs 2/28/2011 22:26'!
-zipper
-	"This lets me masquerade as a ZTree: PreOrderTraversal new traverse: aBST collecting: [:each | each * 2 ]."
-	^ tree zipper.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-BinarySearchTree class
-	instanceVariableNames: ''!
 
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/28/2011 12:46'!
 tree: aBinaryTree

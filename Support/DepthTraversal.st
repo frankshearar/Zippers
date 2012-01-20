@@ -12,14 +12,16 @@ depthFirstTraversal: aZipper doing: aBlock
 	self subclassResponsibility.! !
 
 
-!DepthTraversal methodsFor: 'enumerating' stamp: 'fbs 2/28/2011 17:37'!
+!DepthTraversal methodsFor: 'enumerating' stamp: 'fbs 4/24/2011 12:38'!
+collect: aBlock using: aZipper
+	^ self collectNodes: [:each | aBlock value: each value ] using: aZipper! !
+
+!DepthTraversal methodsFor: 'enumerating' stamp: 'fbs 4/24/2011 12:40'!
 traverse: aTree collecting: aBlock
-	^ self collect: aBlock using: aTree zipper.! !
+	"Traverse the VALUES in aTree."
+	^ self traverseNodes: aTree collecting: [:each | aBlock value: each value].! !
 
 !DepthTraversal methodsFor: 'enumerating' stamp: 'fbs 2/21/2011 07:24'!
-traverse: aTree doing: aBlock
-	^ self depthFirstTraversal: aTree zipper doing: aBlock.! !
- 07:24'!
 traverse: aTree doing: aBlock
 	^ self depthFirstTraversal: aTree zipper doing: aBlock.! !
 
@@ -27,8 +29,3 @@ traverse: aTree doing: aBlock
 traverseNodes: aTree collecting: aBlock
 	"Traverse the NODES in aTree, letting you inspect the relationship between any node and its children."
 	^ self collectNodes: aBlock using: aTree zipper.! !
-
-
-!DepthTraversal methodsFor: 'private' stamp: 'fbs 2/18/2011 07:28'!
-depthFirstTraversal: aZipper doing: aBlock
-	self subclassResponsibility.! !
