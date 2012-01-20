@@ -135,10 +135,9 @@ safeChangedUp
 children
 	self subclassResponsibility.! !
 
-!BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 23:16'!
+!BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 21:00'!
 isBranch
-	^ self focus children notEmpty.
-	"self subclassResponsibility."! !
+	self subclassResponsibility.! !
 
 !BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:56'!
 isEmpty
@@ -325,6 +324,7 @@ BaseZipper class
 !BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 10/18/2011 16:22'!
 on: aTree
 	^ self new focus: aTree trail: TreeZipperNode end.! !
+Tree trail: TreeZipperNode end.! !
 Nodes: trail rightNodes allButFirst
 				parentNodes: trail parentNodes
 				changed: false) ]
