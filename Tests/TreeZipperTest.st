@@ -1,4 +1,4 @@
-TestCase subclass: #TreeZipperTest
+TreeTestCases subclass: #TreeZipperTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -13,9 +13,9 @@ testOn
 	self assert: zipper focus = tree.! !
 
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 23:39'!
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 2/25/2011 17:36'!
 emptyTree
-	^ ZTree value: 0.! !
+	^ ZTree empty.! !
 
 !TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/31/2010 18:21'!
 flatTree
@@ -24,6 +24,10 @@ flatTree
 	   / / | \ \
 	  2 3  4 5 6"
 	^ ZTree value: 1 children: ((2 to: 6) collect: [ :i | ZTree value: i])! !
+
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 2/25/2011 08:05'!
+makeZipperOn: aTree
+	^ TreeZipper on: aTree.! !
 
 !TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/31/2010 17:58'!
 nestedTriangleTree
@@ -497,6 +501,18 @@ testInsertDownInsertsChild
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 2/24/2011 17:29'!
+testInsertDownOnEmptyTreeIsATreeWithOneNode
+	| tree zipper |
+	tree := ZTree empty.
+	zipper := tree zipper.
+	
+	zipper := zipper insertDown: 0.
+	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
+	self should: [zipper up] raise: ZipperNavigation.
+	
+	self assert: zipper root = (ZTree value: 0).! !
+
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:47'!
 testInsertLeftInsertsImmediatelyOlderSibling
 	| tree zipper |
@@ -522,10 +538,10 @@ testInsertRightInsertsYoungerSibling
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
 
 
-!TreeZipperTest methodsFor: 'testing - copying' stamp: 'fbs 2/16/2011 07:45'!
+!TreeZipperTest methodsFor: 'testing - copying' stamp: 'fbs 2/25/2011 08:06'!
 testCopyReturnsExactCopy
 	| copy zipper |
-	zipper := self triangleTree zipper down.
+	zipper := (self makeZipperOn: self triangleTree) down.
 	copy := zipper copy.
 	
 	self deny: copy == zipper.
@@ -544,22 +560,7 @@ testIsEmptyOnNonEmptyTreeAlwaysReturnsFalse
 	self deny: zipper isEmpty.
 	
 	self deny: zipper down isEmpty.! !
-	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2. ZTree value: 3.}.
-	zipper := TreeZipper on: tree.
-	zipper := zipper down rightmost.
-	
-	self assert: zipper focus value = 3 description: 'We followed the wrong path'.
-	self assert: tree printString equals: zipper root printString! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:31'!
-testRootAtChildNodeReturnsRoot
-	| tree zipper |
-	tree := self triangleTree.
-	zipper := tree zipper down.
-	
-	self assert: zipper root = tree.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:29'!
+t methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:29'!
 testRootAtRootReturnsRoot
 	| tree zipper |
 	tree := self emptyTree.

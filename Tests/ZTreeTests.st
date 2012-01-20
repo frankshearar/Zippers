@@ -40,6 +40,10 @@ testEqualsUnequalTreesInValueReturnsFalse
 	self deny: a = b.! !
 
 
+!ZTreeTests methodsFor: 'testing - printing' stamp: 'fbs 2/25/2011 21:33'!
+testPrintEmptyTreeShowsSpecialSymbol
+	self assert: '<>' = ZTree empty printString.! !
+
 !ZTreeTests methodsFor: 'testing - printing' stamp: 'fbs 12/31/2010 23:32'!
 testPrintSingleNodePrintsNoChildren
 	self assert: (ZTree value: 1) printString = '(1)'.! !
@@ -49,15 +53,12 @@ testPrintTreeNodePrintsChildren
 	| t |
 	t := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
 	self assert: t printString = '(1 (2), (3))'.! !
-sting - printing' stamp: 'fbs 12/31/2010 23:32'!
-testPrintSingleNodePrintsNoChildren
-	self assert: (ZTree value: 1) printString = '(1)'.! !
 
-!ZTreeTests methodsFor: 'testing - printing' stamp: 'fbs 12/31/2010 23:33'!
-testPrintTreeNodePrintsChildren
-	| t |
-	t := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
-	self assert: t printString = '(1 (2), (3))'.! !
+
+!ZTreeTests methodsFor: 'testing - instance creation' stamp: 'fbs 2/25/2011 17:55'!
+testValueWithEmptyTreeReturnsEmptyTree
+	self assert: ZTree empty == (ZTree value: ZTree empty).! !
+g = '(1 (2), (3))'.! !
 
 
 !ZTreeTests methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 21:33'!

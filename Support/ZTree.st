@@ -1,6 +1,6 @@
 Object subclass: #ZTree
 	instanceVariableNames: 'children value'
-	classVariableNames: ''
+	classVariableNames: 'Empty'
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
 !ZTree commentStamp: 'fbs 12/30/2010 23:32' prior: 0!
@@ -48,29 +48,32 @@ value: anObject children: aCollection
 zipper
 	^ TreeZipper on: self.! !
 
+
+!ZTree methodsFor: 'testing' stamp: 'fbs 2/24/2011 17:26'!
+isEmpty
+	^ false.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 ZTree class
 	instanceVariableNames: ''!
 
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:40'!
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/22/2011 21:41'!
+empty
+	^ Empty ifNil: [Empty := ZEmptyTree new].! !
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
 value: anObject
-	^ self new value: anObject children: OrderedCollection new.! !
+	^ anObject = ZTree empty
+		ifTrue: [ ZTree empty ]
+		ifFalse: [ self new
+			value: anObject
+			children: OrderedCollection new ]! !
 
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
-n collect: #asMutableTree).
-	^ mutableCopy.! !
-
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 22:30'!
-asOrderedCollection
-	^ self collect: #yourself! !
-
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:09'!
-balance
-	"Return a balanced copy of self."
-	^ self asOrderedCollection asBalancedBinaryTree.! !
+Collection asBalancedBinaryTree.! !
 
 !ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 21:18'!
 balanceDSW

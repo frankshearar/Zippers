@@ -1,4 +1,4 @@
-Object subclass: #PreOrderTraversal
+DepthTraversal subclass: #PreOrderTraversal
 	instanceVariableNames: 'root'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -7,32 +7,8 @@ Object subclass: #PreOrderTraversal
 I provide a pre-order traversal of an n-tree: I visit the value of a node and then its subchildren.!
 
 
-!PreOrderTraversal methodsFor: 'private' stamp: 'fbs 2/17/2011 07:57'!
+!PreOrderTraversal methodsFor: 'private' stamp: 'fbs 2/25/2011 17:37'!
 depthFirstTraversal: aZipper doing: aBlock
-	"A naive depth-first traversal. It fails in the presence of cycles."
-	| value |
-	"aZipper isNil if we're backtracking."
-	aZipper ifNil: [^ nil].
-	
-	value := aBlock value: aZipper focus value.
-	
-	^ aZipper isEmpty
-		ifTrue: [ value ]
-		ifFalse: [ self depthFirstTraversal:
-			(aZipper downOrElse:
-				[self depthFirstTraversal:
-					(aZipper rightOrElse: [
-						self depthFirstTraversal:
-							(aZipper up rightOrElse: [nil "All nodes processed; up again!!"])
-							doing: aBlock])
-					doing: aBlock])
-			doing: aBlock ]! !
-
-
-!PreOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/14/2011 08:30'!
-traverse: aTree doing: aBlock
-	self depthFirstTraversal: aTree zipper doing: aBlock.! !
-g: aBlock
 	"A naive depth-first traversal. It fails in the presence of cycles."
 	^ self collect: aBlock using: aZipper.
 	
@@ -52,5 +28,26 @@ g: aBlock
 						self depthFirstTraversal:
 							(aZipper up rightOrElse: [ nil ])
 							doing: aBlock ])
+					doing: aBlock ])
+			doing: aBlock."! !
+
+
+!PreOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/25/2011 17:44'!
+collect: aBlock using: aZipper
+	"A naive depth-first traversal. It fails in the presence of cycles."
+	| collected move value |
+	aZipper isEmpty ifTrue: [ ^ OrderedCollection new ].
+	
+	value := aBlock value: aZipper focus value.
+	move := aZipper safeDown.
+	collected := (move first = #success)
+		ifTrue: [ (self collect: aBlock using: move second) copy addFirst: value; yourself ]
+		ifFalse: [ { value } asOrderedCollection ].
+	
+	move := aZipper safeRight.
+	move first = #success ifTrue: [collected addAll: (self collect: aBlock using: move second)].
+
+	^ collected.! !
+ck ])
 					doing: aBlock ])
 			doing: aBlock."! !

@@ -9,13 +9,14 @@ makeTraversal
 	^ InOrderTraversal new.! !
 
 
-!InOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/28/2011 17:46'!
+!InOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/24/2011 17:38'!
 testCollectEnumeratesCorrectly
 	| i tree |
 	tree := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.
-	i := self makeTraversal traverse: tree collecting: [:each | each].
+	i := self makeTraversal collect: [:each | each] using: tree zipper.
 	
-	self assert: i asOrderedCollection = #(3 2 4 1 5) asOrderedCollection.! !
+	self assert: i = #(3 2 4 1 5) asOrderedCollection.! !
+eredCollection.! !
 
 !InOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 4/24/2011 22:04'!
 testTraversalHandlesEmptySubtrees
