@@ -212,6 +212,15 @@ testLeftRightIdempotent
 			i timesRepeat: [ navigated := navigated right ].
 			self assert: original focus = navigated focus ]! !
 
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/22/2011 13:59'!
+testLeftmostMovesToLeftmostSibling
+	| tree zipper |
+	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2. ZTree value: 3.}.
+	zipper := TreeZipper on: tree.
+	zipper := zipper down right right leftmost.
+	
+	self assert: zipper focus value = 1 description: 'We followed the wrong path'.! !
+
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 10/17/2011 17:51'!
 testNonMutatingNavigationReturnsIdenticalStructure
 	| data |
@@ -312,6 +321,16 @@ testRightStoresValueCorrectly
 	zipper := tree zipper.
 	"Down, any (valid) combination of right/left, then up: no-op."
 	self assert: zipper focus value = zipper down right up focus value.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/22/2011 14:03'!
+testRightmostMovesToRightmostSibling
+	| tree zipper |
+	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2. ZTree value: 3.}.
+	zipper := TreeZipper on: tree.
+	zipper := zipper down rightmost.
+	
+	self assert: zipper focus value = 3 description: 'We followed the wrong path'.
+	self assert: tree printString equals: zipper root printString! !
 
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:31'!
 testRootAtChildNodeReturnsRoot
@@ -806,23 +825,3 @@ testSafeInsertRightOnRootIndicatesFailure
 	attempt := zipper safeInsertRight: (ZTree value: 2).
 	self assert: #insertRightAtRoot equals: attempt first.
 	self assert: attempt second = zipper.! !
-.
-	self assert: attempt second focus value = 2 description: 'Zipper not focused on new node'.
-	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
-
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 20:49'!
-testSafeInsertRightOnRootIndicatesFailure
-	| attempt tree zipper |
-	tree := ZTree value: 0.
-	zipper := tree zipper.
-	attempt := zipper safeInsertRight: (ZTree value: 2).
-	self assert: #insertRightAtRoot equals: attempt first.
-	self assert: attempt second = zipper.! !
-
-
-!TreeZipperTest methodsFor: 'testing - sharing' stamp: 'fbs 11/1/2011 17:24'!
-testZipperShouldShareSubstructures
-	| t newTree |
-	t := self nestedTriangleTree.
-	newTree := (t zipper down changeTo: 5) root.
-	self assert: newTree children second == t children second.! !
