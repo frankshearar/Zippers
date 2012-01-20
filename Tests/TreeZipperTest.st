@@ -245,6 +245,77 @@ testChangeToReplacesValue
 	self assert: zipper up focus value = 1 description: 'Position changed'.
 	! !
 
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 15:55'!
+testDeleteAtTopFails
+	self should: [self emptyTree zipper delete] raise: ZipperNavigation.! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:06'!
+testDeleteLeafNode
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
+	zipper := tree zipper down delete.
+	
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:07'!
+testDeleteLeafNodeDeletesNode
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
+	zipper := tree zipper down delete.
+	
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:15'!
+testDeleteLeafNodeFocusesOnParent
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2}.
+	zipper := tree zipper down.
+	zipper := zipper delete.
+	
+	self assert: zipper root = (ZTree value: 1).
+	self assert: zipper focus value = 1.! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:06'!
+testDeleteNodeFocusesOnYoungerSibling
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
+	zipper := tree zipper down delete.
+	
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:15'!
+testDeleteOldestSiblingFocusesOnYoungerSibling
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
+	zipper := tree zipper down.
+	self assert: zipper focus value = 2.
+	zipper := zipper delete.
+	
+	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3. ZTree value: 4}) description: 'Wrong thing deleted'.! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:15'!
+testDeleteYoungerSiblingFocusesOnOlderSibling
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
+	zipper := tree zipper down right.
+	self assert: zipper focus value = 3.
+	zipper := zipper delete.
+	
+	self assert: zipper focus value = 2 description: 'Zipper focused on wrong sibling'.
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 4}) description: 'Wrong thing deleted'.! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:16'!
+testDeleteYoungestSiblingFocusesOnOlderSibling
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
+	zipper := tree zipper down right right.
+	self assert: zipper focus value = 4.
+	zipper := zipper delete.
+	
+	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
+	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}) description: 'Wrong thing deleted'.! !
+
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:46'!
 testInsertDownInsertsChild
 	| tree zipper |
@@ -281,109 +352,7 @@ testInsertRightInsertsYoungerSibling
 	zipper := tree zipper.
 	zipper := zipper down insertRight: 2.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
-
-	zipper := (self makeZipperOn: self triangleTree) down.
-	copy := zipper copy.
-	
-	self deny: copy == zipper.
-	self assert: copy focus = zipper focus.
-	self assert: copy up focus = zipper up focus.! !
-
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:18'!
-testDownOnEmptyTreeSignalsException
-	| zipper |
-	zipper := TreeZipper on: self emptyTree.
-	
-	self
-		should: [zipper down]
-		raise: ZipperNavigation.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:59'!
-testDownOnLeafNodeSignalsException
-	| zipper |
-	zipper := TreeZipper on: self triangleTree.
-	zipper := zipper down.
-
-	self
-		should: [zipper down]
-		raise: ZipperNavigation.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 23:44'!
-testDownOnNonEmptyTreeFocusesOnFirstSibling
-	| tree zipper |
-	tree := self triangleTree.
-	zipper := TreeZipper on: tree.
-	zipper := zipper down.
-	
-	self assert: zipper focus = tree children first.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/16/2011 17:42'!
-testDownOrElseCanUseFocus
-	| node tree zipper |
-	tree := self emptyTree.
-	zipper := tree zipper.
-	zipper downOrElse: [:focus | node := focus ].
-	
-	self assert: node = zipper focus.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/16/2011 07:50'!
-testDownOrElseOnEmptyTreeRunsBlock
-	| ran zipper |
-	zipper := self emptyTree zipper.
-	ran := false.
-	zipper := zipper downOrElse: [ran := true].
-	self assert: ran.
-	self assert: zipper == ran description: 'Unexpected result'.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/13/2011 19:18'!
-testDownOrElseOnLeafNodeRunsBlock
-	| ran zipper |
-	zipper := TreeZipper on: self triangleTree.
-	zipper := zipper down.
-
-	ran := false.
-	zipper := zipper downOrElse: [ran := true].
-	self assert: ran.
-	self assert: zipper == ran description: 'Unexpected result'.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/13/2011 18:29'!
-testDownOrElseOnNonEmptyTreeFocusesOnFirstSibling
-	| ran tree zipper |
-	tree := self triangleTree.
-	zipper := TreeZipper on: tree.
-	ran := false.
-	zipper := zipper downOrElse: [ran := true].
-	
-	self assert: zipper focus = tree children first.
-	self deny: ran.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:48'!
-testLeftAtLeftmostNodeSignalsException
-	| zipper |
-	zipper := (TreeZipper on: self triangleTree) down.
-	
-	self
-		should: [zipper left]
-		raise: ZipperNavigation.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:29'!
-testLeftAtRootNodeSignalsException
-	| zipper |
-	zipper := TreeZipper on: self triangleTree.
-	
-	self
-		should: [zipper left]
-		raise: ZipperNavigation.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:22'!
-testLeftMovesToLeftSibling
-	| tree zipper |
-	tree := self nestedTriangleTree.
-	zipper := TreeZipper on: tree.
-	zipper := zipper down right down up.
-	
-	self assert: zipper focus value = 3 description: 'We followed the wrong path'.
+ath'.
 
 	zipper := zipper left.
 	self assert: zipper focus value = 2 description: 'Left didn''t go left'.! !

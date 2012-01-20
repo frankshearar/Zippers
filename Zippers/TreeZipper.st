@@ -97,6 +97,32 @@ changeTo: newValue
 			children: focus children)
 		trail: trail.! !
 
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 17:17'!
+delete
+	trail ifNil: [^ ZipperNavigation signal: 'Delete at top'].
+	
+	(trail leftNodes isEmpty and: [trail rightNodes isEmpty]) ifTrue:
+		[^ TreeZipper new
+			focus: (ZTree value: trail value) 
+			trail: trail path].
+			
+	trail leftNodes isEmpty ifTrue:
+		[^ TreeZipper new
+			focus: trail rightNodes first
+			trail: (TreeZipperNode
+				path: trail path
+				value: trail value
+				leftNodes: trail leftNodes
+				rightNodes: trail rightNodes allButFirst)].
+			
+	^ TreeZipper new
+		focus: trail leftNodes first
+		trail: (TreeZipperNode
+			path: trail path
+			value: trail value
+			leftNodes: trail leftNodes allButFirst
+			rightNodes: trail rightNodes).! !
+
 !TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 23:46'!
 insertDown: anObject
 	^ TreeZipper new
@@ -128,9 +154,6 @@ insertRight: anObject
 			value: trail value
 			leftNodes: trail leftNodes
 			rightNodes: (trail rightNodes copy addFirst: (ZTree value: anObject); yourself))! !
-
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:47'!
-insertUp: anObject! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
