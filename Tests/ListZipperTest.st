@@ -54,8 +54,8 @@ testLeft
 	left := left left.
 	self assert: left focus = list.! !
 
-!ListZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/28/2010 19:11'!
-testLeftPastBeginningOfCollectionReturnsEmptyZipper
+!ListZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:17'!
+testLeftPastBeginningOfCollectionSignalsException
 	| zipper |
 	zipper := ListZipper on: #(1 2).
 	self
@@ -80,11 +80,12 @@ testRight
 	right := right right.
 	self assert: right focus = list allButFirst allButFirst.! !
 
-!ListZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/28/2010 17:37'!
-testRightPastEndOfCollectionReturnsEmptyZipper
+!ListZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:17'!
+testRightPastEndOfCollectionSignalsException
 	| zipper |
 	zipper := ListZipper on: #(1 2).
 	self
 		should: [ zipper right right right ]
 		raise: ZipperNavigation.! !
+! !
 !

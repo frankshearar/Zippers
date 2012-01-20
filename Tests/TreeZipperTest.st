@@ -4,56 +4,60 @@ TestCase subclass: #TreeZipperTest
 	poolDictionaries: ''
 	category: 'Zippers-Tests'!
 
-!TreeZipperTest methodsFor: 'testing - instance creation' stamp: 'fbs 12/30/2010 22:08'!
+!TreeZipperTest methodsFor: 'testing - instance creation' stamp: 'fbs 12/30/2010 22:19'!
 testOn
 	| tree zipper |
-	tree := Object new.
+	tree := self emptyTree.
 	zipper := TreeZipper on: tree.
 	
 	self assert: zipper focus = tree.! !
-ospaced font:
-	       1
-	   / / | \ \
-	  2 3  4 5 6"
-	^ ZTree value: 1 children: ((2 to: 6) collect: [ :i | ZTree value: i])! !
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 2/25/2011 08:05'!
-makeZipperOn: aTree
-	^ TreeZipper on: aTree.! !
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/31/2010 17:58'!
-nestedTriangleTree
-	" Best viewed in a monospaced font:
-	    1
-	   / \
-	  2   3 
-	     / \
-	    4   5 "
-	| b c |
-	b := ZTree value: 2.
-	c := ZTree value: 3 children: {ZTree value: 4. ZTree value: 5}.
-	^ ZTree value: 1 children: {b. c.}! !
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 22:12'!
+emptyTree
+	^ Object new.! !
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/31/2010 16:53'!
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 22:20'!
 triangleTree
 	" Best viewed in a monospaced font:
-	   1
+	   A
 	  / \
-	 2   3 "
-	| b c |
-	b := ZTree value: 2.
-	c := ZTree value: 3.
-	^ ZTree value: 1 children: {b. c.}! !
+	 B   C "
+	| a b c |
+	a := Object new.
+	b := Object new.
+	c := Object new.
+	a addDependent: b.
+	a addDependent: c.! !
 
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:30'!
-testChangeReplacesValue
-	| tree zipper |
-	tree := self triangleTree.
-	zipper := (TreeZipper on: tree) down.
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:18'!
+testDownOnEmptyTreeSignalsException
+	| zipper |
+	zipper := TreeZipper on: self emptyTree.
 	
-	zipper := zipper change: [ :z | ZTree value: (z value + 1)].
-	self assert: zipper focus value = 3 description: 'No change made'.
+	self
+		should: [zipper down]
+		raise: ZipperNavigation.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:23'!
+testDownOnLeafNodeSignalsException
+	| zipper |
+	zipper := TreeZipper on: self triangleTree.
+	zipper := zipper down.
+	self
+		should: [zipper down]
+		raise: ZipperNavigation.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:21'!
+testUpAtRootNodeSignalsException
+	| zipper |
+	zipper := TreeZipper on: self triangleTree.
+	
+	self
+		should: [zipper up]
+		raise: ZipperNavigation.! !
+escription: 'No change made'.
 	self assert: zipper right focus value = 3 description: 'Position changed'.
 
 	self
