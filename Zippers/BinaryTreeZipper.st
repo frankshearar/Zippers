@@ -18,9 +18,11 @@ focus
 	^ internalZipper focus.! !
 
 
-!BinaryTreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 16:15'!
+!BinaryTreeZipper methodsFor: 'mutating' stamp: 'fbs 11/1/2011 08:00'!
 insertDown: anObject
-	^ internalZipper insertDown: anObject.! !
+	^ internalZipper focus isEmpty
+		ifTrue: [internalZipper changeTo: anObject]
+		ifFalse: [internalZipper insertDown: anObject].! !
 
 !BinaryTreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 16:37'!
 insertLeft: anObject
@@ -107,8 +109,5 @@ BinaryTreeZipper class
 	instanceVariableNames: ''!
 
 !BinaryTreeZipper class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 15:18'!
-on: aTree
-	^ self new using: aTree zipper.! !
-e creation' stamp: 'fbs 4/30/2011 15:18'!
 on: aTree
 	^ self new using: aTree zipper.! !

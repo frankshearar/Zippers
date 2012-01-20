@@ -7,18 +7,17 @@ Object subclass: #BinarySearchTree
 I implement a binary search tree in a strictly functional manner. I'm pretty naive, in that I do no balancing.!
 
 
-!BinarySearchTree methodsFor: 'adding' stamp: 'fbs 2/21/2011 22:12'!
+!BinarySearchTree methodsFor: 'adding' stamp: 'fbs 10/19/2011 17:43'!
 add: aComparableObject
 	"Add some object that understands < to our tree. aComparableObject < node goes into the left subtree; otherwise, the object goes into the right subtree."
-	^ BinarySearchTree tree: (self add: aComparableObject to: tree zipper)! !
+	^ BinarySearchTree tree: (self add: aComparableObject to: tree zipper) root! !
 
 
-!BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/25/2011 22:56'!
+!BinarySearchTree methodsFor: 'private' stamp: 'fbs 10/19/2011 17:43'!
 add: anObject to: aZipper
-	"If we're at a leaf node, and <, insertDown."
-	"If we're not at a leaf node, move further into the tree."
+	"Return a zipper with anObject inserted in the correct place: if we're at a leaf node, and <, insertDown; otherwise, move further into the tree."
 	| currentValue leftChild move |
-	aZipper focus isEmpty ifTrue: [ ^ (aZipper insertDown: anObject) root ].
+	aZipper focus isEmpty ifTrue: [ ^ aZipper insertDown: anObject ].
 	
 	currentValue := aZipper focus value.
 	
@@ -26,9 +25,9 @@ add: anObject to: aZipper
 	move := aZipper safeDown.
 	move first = #success ifFalse:
 		["Leaf node. If adding a right subtree, add the empty tree as a left subtree."
-		^ (anObject < currentValue
+		^ anObject < currentValue
 			ifTrue: [ aZipper insertDown: anObject ]
-			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: anObject ]) root ].
+			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: anObject ] ].
 
 	leftChild := move second.
 	
@@ -98,6 +97,4 @@ tree: aBinaryTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-/30/2011 17:08'!
-with: anObject
-	^ self new tree: (ZTree value: anObject).! !
+^ self new tree: (ZTree value: anObject).! !

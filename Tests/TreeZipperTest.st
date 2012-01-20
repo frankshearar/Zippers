@@ -212,6 +212,12 @@ testLeftRightIdempotent
 			i timesRepeat: [ navigated := navigated right ].
 			self assert: original focus = navigated focus ]! !
 
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 10/17/2011 17:51'!
+testNonMutatingNavigationReturnsIdenticalStructure
+	| data |
+	data := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.
+	self assert: data == data zipper down right root.! !
+
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:49'!
 testRightAtRightmostNodeSignalsException
 	| zipper |
@@ -393,7 +399,7 @@ testUpReturnsToParentNode2
 	self assert: zipper focus = tree.! !
 
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 18:47'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 10/31/2011 21:56'!
 testChangeReplacesValue
 	| tree zipper |
 	tree := self triangleTree.
@@ -402,10 +408,12 @@ testChangeReplacesValue
 	zipper := zipper change: [ :i | i + 1].
 	self assert: zipper focus value = 3 description: 'No change made'.
 	self assert: zipper right focus value = 3 description: 'Position changed'.
-	self assert: zipper up focus value = 1 description: 'Position changed'.
-	! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 19:31'!
+	self
+		assert: (ZTree value: 1 children: {ZTree value: 3. ZTree value: 3.}) printString
+		equals: zipper root printString.! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 11/1/2011 08:02'!
 testChangeToReplacesValue
 	| tree zipper |
 	tree := self triangleTree.
@@ -414,8 +422,10 @@ testChangeToReplacesValue
 	zipper := zipper changeTo: 5.
 	self assert: zipper focus value = 5 description: 'No change made'.
 	self assert: zipper right focus value = 3 description: 'Position changed'.
-	self assert: zipper up focus value = 1 description: 'Position changed'.
-	! !
+
+	self
+		assert: (ZTree value: 1 children: {ZTree value: 5. ZTree value: 3}) printString
+		equals: zipper root printString.! !
 
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 15:55'!
 testDeleteAtTopFails
@@ -501,7 +511,7 @@ testInsertDownInsertsChild
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 2/24/2011 17:29'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 10/31/2011 21:56'!
 testInsertDownOnEmptyTreeIsATreeWithOneNode
 	| tree zipper |
 	tree := ZTree empty.
@@ -509,7 +519,6 @@ testInsertDownOnEmptyTreeIsATreeWithOneNode
 	
 	zipper := zipper insertDown: 0.
 	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
-	self should: [zipper up] raise: ZipperNavigation.
 	
 	self assert: zipper root = (ZTree value: 0).! !
 
@@ -570,20 +579,7 @@ testIsEmptyOnNonEmptyTreeAlwaysReturnsFalse
 	self deny: zipper isEmpty.
 	
 	self deny: zipper down isEmpty.! !
-lseAtRootNodeRunsBlock
-	| ran zipper |
-	zipper := self triangleTree zipper.
-	
-	ran := false.
-	zipper := zipper upOrElse: [ran := true.].
-	
-	self assert: ran.
-	self assert: zipper == ran description: 'Unexpected result'.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/16/2011 17:41'!
-testUpOrElseCanUseFocus
-	| node tree zipper |
-	tree := self emptyTree.
+:= self emptyTree.
 	zipper := tree zipper.
 	zipper rightOrElse: [:focus | node := focus ].
 	
