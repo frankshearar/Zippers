@@ -3,8 +3,8 @@ Object subclass: #BinarySearchTree
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-BST'!
-!BinarySearchTree commentStamp: 'fbs 2/5/2011 23:10' prior: 0!
-I implement a binary search tree in a strictly functional manner.!
+!BinarySearchTree commentStamp: 'fbs 2/28/2011 22:27' prior: 0!
+I implement a binary search tree in a strictly functional manner. I'm pretty naive, in that I do no balancing.!
 
 
 !BinarySearchTree methodsFor: 'adding' stamp: 'fbs 2/21/2011 22:12'!
@@ -60,8 +60,9 @@ initialize
 	tree := ZTree empty.! !
 
 
-!BinarySearchTree methodsFor: 'accessing' stamp: 'fbs 2/25/2011 21:36'!
+!BinarySearchTree methodsFor: 'accessing' stamp: 'fbs 2/28/2011 22:26'!
 zipper
+	"This lets me masquerade as a ZTree: PreOrderTraversal new traverse: aBST collecting: [:each | each * 2 ]."
 	^ tree zipper.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -76,12 +77,7 @@ tree: aTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 2/23/2011 21:04'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-rating' stamp: 'fbs 4/30/2011 22:30'!
-collect: aBlock
-	^ tree collect: aBlock.! !
-
-
-!BinarySearchTree methodsFor: 'initialize-release' stamp: 'fbs 2/24/2011 17:33'!
+1 17:33'!
 initialize
 	tree := ZTree empty.! !
 
