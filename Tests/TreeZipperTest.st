@@ -108,6 +108,23 @@ testLeftMovesToLeftSibling
 	zipper := zipper left.
 	self assert: zipper focus value = 2 description: 'Left didn''t go left'.! !
 
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:34'!
+testLeftRightIdempotent
+	| tree zipper |
+	tree := self flatTree.
+	zipper := tree zipper down.
+	4 timesRepeat: [zipper := zipper right].
+	self assert: zipper focus value = 6.
+	
+	"Node 2 has 4 younger siblings, so 4 is as far as we can navigate with #right.."
+	1 to: 4 do:
+		[ :i |
+			| original navigated |
+			original := navigated :=zipper.
+			i timesRepeat: [ navigated := navigated left ].
+			i timesRepeat: [ navigated := navigated right ].
+			self assert: original focus = navigated focus ]! !
+
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 18:49'!
 testRightAtRightmostNodeSignalsException
 	| zipper |
@@ -117,32 +134,48 @@ testRightAtRightmostNodeSignalsException
 		should: [zipper right]
 		raise: ZipperNavigation.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:29'!
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:27'!
 testRightAtRootNodeSignalsException
 	| zipper |
-	zipper := TreeZipper on: self triangleTree.
+	zipper := self triangleTree zipper.
 	
 	self
 		should: [zipper right]
 		raise: ZipperNavigation.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:59'!
-testRightLeftANoOp
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:35'!
+testRightLeftIdempotent
 	| tree zipper |
-	tree := self triangleTree.
-	zipper := TreeZipper on: tree.
-	zipper := zipper down right left.
+	tree := self flatTree.
+	zipper := tree zipper down.
 	
-	self assert: zipper focus = (tree children at: 1).! !
+	"Node 2 has 4 younger siblings, so 4 is as far as we can navigate with #right.."
+	1 to: 4 do:
+		[ :i |
+			| original navigated |
+			original := navigated :=zipper.
+			i timesRepeat: [ navigated := navigated right ].
+			i timesRepeat: [ navigated := navigated left ].
+			self assert: original focus = navigated focus ]! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 17:31'!
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:27'!
 testRightMovesToRightSibling
 	| tree zipper |
 	tree := self triangleTree.
-	zipper := TreeZipper on: tree.
+	zipper := tree zipper.
 	zipper := zipper down right.
 	
 	self assert: zipper focus = (tree children at: 2).! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:48'!
+testRightStoresValueCorrectly
+	"#right didn't store the value correctly, and would cause the right-most node
+	value to be written to all the subsequently-visited nodes."
+	| tree zipper |
+	tree := self nestedTriangleTree.
+	zipper := tree zipper.
+	"Down, any (valid) combination of right/left, then up: no-op."
+	self assert: zipper focus value = zipper down right up focus value.! !
 
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:31'!
 testRootAtChildNodeReturnsRoot
@@ -160,22 +193,30 @@ testRootAtRootReturnsRoot
 	
 	self assert: zipper root == tree.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:21'!
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:26'!
 testUpAtRootNodeSignalsException
 	| zipper |
-	zipper := TreeZipper on: self triangleTree.
+	zipper := self triangleTree zipper.
 	
 	self
 		should: [zipper up]
 		raise: ZipperNavigation.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 23:08'!
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:26'!
 testUpReturnsToParentNode
 	| tree zipper |
 	tree := self triangleTree.
-	zipper := TreeZipper on: tree.
-	zipper := zipper down.
-	zipper := zipper up.
+	zipper := tree zipper.
+	zipper := zipper down up.
+	
+	self assert: zipper focus = tree.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 14:46'!
+testUpReturnsToParentNode2
+	| tree zipper |
+	tree := ZTree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}.
+	zipper := tree zipper.
+	zipper := zipper down down up up.
 	
 	self assert: zipper focus = tree.! !
 
@@ -217,11 +258,21 @@ testInsertDownInsertsChild
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 19:43'!
-testInsertLeftInsertsSibling
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:47'!
+testInsertLeftInsertsImmediatelyOlderSibling
 	| tree zipper |
-	tree := self emptyTree.
-	zipper := tree zipper.! !
+	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}.
+	zipper := tree zipper.
+	zipper := zipper down right insertLeft: 3.
+	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:20'!
+testInsertLeftInsertsOlderSibling
+	| tree zipper |
+	tree := ZTree value: 0 children: {ZTree value: 1}.
+	zipper := tree zipper.
+	zipper := zipper down insertLeft: 2.
+	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
 
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:52'!
 testInsertRightInsertsYoungerSibling
@@ -230,53 +281,7 @@ testInsertRightInsertsYoungerSibling
 	zipper := tree zipper.
 	zipper := zipper down insertRight: 2.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
-zipper := zipper down right insertLeft: (ZTree value: 3).
-	self assert: zipper focus value = 3 description: 'Zipper not focused on new node'.
-	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 12:43'!
-testInsertLeftInsertsOlderSibling
-	| tree zipper |
-	tree := ZTree value: 0 children: {ZTree value: 1}.
-	zipper := tree zipper.
-	zipper := zipper down insertLeft: (ZTree value: 2).
-	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
-
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:54'!
-testInsertLeftOnRootIndicatesFailure
-	| tree zipper |
-	tree := ZTree value: 0.
-	zipper := tree zipper.
-	self should: [zipper insertLeft: (ZTree value: 1)] raise: ZipperNavigation! !
-
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
-testInsertRightInsertsYoungerSibling
-	| tree zipper |
-	tree := ZTree value: 0 children: {ZTree value: 1}.
-	zipper := tree zipper.
-	zipper := zipper down insertRight: (ZTree value: 2).
-	self assert: zipper focus value = 2 description: 'Zipper not focused on new node'.
-	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
-
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 12:44'!
-testInsertRightOnEmptyTreeInsertsYoungerSibling
-	| tree zipper |
-	tree := ZTree value: 0 children: {ZTree empty}.
-	zipper := tree zipper.
-	zipper := zipper down insertRight: (ZTree value: 2).
-	self assert: zipper root = (ZTree value: 0 children: {ZTree empty. ZTree value: 2}).! !
-
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:50'!
-testInsertRightOnRootIndicatesFailure
-	| tree zipper |
-	tree := ZTree value: 0.
-	zipper := tree zipper.
-	self should: [zipper insertRight: (ZTree value: 1)] raise: ZipperNavigation! !
-
-
-!TreeZipperTest methodsFor: 'testing - copying' stamp: 'fbs 2/25/2011 08:06'!
-testCopyReturnsExactCopy
-	| copy zipper |
 	zipper := (self makeZipperOn: self triangleTree) down.
 	copy := zipper copy.
 	

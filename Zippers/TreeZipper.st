@@ -25,7 +25,7 @@ down
 				leftNodes: OrderedCollection new
 				rightNodes: focus children allButFirst).! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 18:50'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 1/1/2011 15:37'!
 left
 	trail ifNil: [^ ZipperNavigation signal: 'Left at the root node'].
 	trail leftNodes ifEmpty: [^ ZipperNavigation signal: 'Left at left-most sibling node'].
@@ -33,12 +33,12 @@ left
 	^ TreeZipper new
 		focus: trail leftNodes first
 		trail: (TreeZipperNode
-			path: trail
-			value: focus value
+			path: trail path
+			value: trail value
 			leftNodes: (trail leftNodes allButFirst)
 			rightNodes: (trail rightNodes addFirst: focus; yourself)).! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 18:50'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 1/1/2011 15:43'!
 right
 	trail ifNil: [^ ZipperNavigation signal: 'Right at the root node'].
 	trail rightNodes ifEmpty: [^ ZipperNavigation signal: 'Right at the right-most sibling node'].
@@ -46,8 +46,8 @@ right
 	^ TreeZipper new
 		focus: trail rightNodes first
 		trail: (TreeZipperNode
-			path: trail
-			value: focus value
+			path: trail path
+			value: trail value
 			leftNodes: (trail leftNodes addFirst: focus; yourself)
 			rightNodes: trail rightNodes allButFirst).! !
 
@@ -58,14 +58,14 @@ root
 		ifNil: [focus]
 		ifNotNil: [self up root]! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:26'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 1/1/2011 14:40'!
 up
 	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
 	
 	^ TreeZipper new
 		focus: (ZTree
 			value: trail value
-			children: trail leftNodes, focus asOrderedCollection, trail rightNodes)
+			children: trail leftNodes reverse, focus asOrderedCollection, trail rightNodes)
 		trail: trail path.! !
 
 
@@ -107,8 +107,16 @@ insertDown: anObject
 			leftNodes: OrderedCollection new
 			rightNodes: focus children).! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:45'!
-insertLeft: anObject! !
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 15:49'!
+insertLeft: anObject
+	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
+	^ TreeZipper new
+		focus: focus
+		trail: (TreeZipperNode
+			path: trail path
+			value: trail value
+			leftNodes: (trail leftNodes copy addFirst: (ZTree value: anObject); yourself)
+			rightNodes: trail rightNodes)! !
 
 !TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 00:10'!
 insertRight: anObject
