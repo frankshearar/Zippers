@@ -11,7 +11,7 @@ I'm a basic implementation of a tree, only present so that my package doesn't ne
 children
 	^ children! !
 
-!ZTree methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:40'!
+!ZTree methodsFor: 'accessing' stamp: 'fbs 12/31/2010 16:54'!
 value
 	^ value.! !
 
@@ -31,7 +31,7 @@ printString
 		')'.! !
 
 
-!ZTree methodsFor: 'private' stamp: 'fbs 12/30/2010 23:41'!
+!ZTree methodsFor: 'private' stamp: 'fbs 12/31/2010 16:54'!
 value: anObject children: aCollection
 	value := anObject.
 	children := aCollection asOrderedCollection.! !

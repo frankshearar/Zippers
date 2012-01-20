@@ -1,5 +1,5 @@
 Object subclass: #TreeZipper
-	instanceVariableNames: 'focus trail leftNodes rightNodes'
+	instanceVariableNames: 'focus trail'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
@@ -11,37 +11,53 @@ In particular, Smalltalk has a built-in tree structure, that of dependents: any 
 That is, I allow one to navigate arbitrarily over a tree structure, and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:49'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:07'!
 down
 	"Return a Zipper focusing on the first child element of this node."
 	(self focus children isEmpty)
 		ifTrue: [ ^ ZipperNavigation signal: 'Down at a leaf node' ].
+		
 	^ TreeZipper new
-		focus: self focus children first
-		trail: (trail
-			addFirst: (TreeZipperTrail
+		focus: focus children first
+		trail: (TreeZipperNode
+				path: trail
 				value: focus value
-				zipper: (ListZipper on: focus children));
-			yourself).! !
+				leftNodes: OrderedCollection new
+				rightNodes: focus children allButFirst).! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:40'!
-left! !
-
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:41'!
-right! !
-
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:58'!
-up
-	| parent |
-	trail isEmpty ifTrue: [^ ZipperNavigation signal: 'Up at the root node'].
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:54'!
+left
+	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
 	
-	"Parent is the last TreeZipperTrail we used - a zipper on our father and uncles."
-	parent := trail first.
+	^ TreeZipper new
+		focus: trail leftNodes first
+		trail: (TreeZipperNode
+			path: trail
+			value: focus value
+			leftNodes: (trail leftNodes allButFirst)
+			rightNodes: (trail rightNodes addFirst: focus; yourself)).! !
+
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:34'!
+right
+	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
+	
+	^ TreeZipper new
+		focus: trail rightNodes first
+		trail: (TreeZipperNode
+			path: trail
+			value: focus value
+			leftNodes: (trail leftNodes addFirst: focus; yourself)
+			rightNodes: trail rightNodes allButFirst).! !
+
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:26'!
+up
+	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
+	
 	^ TreeZipper new
 		focus: (ZTree
-			value: parent value
-			children: parent zipper focus, parent zipper trail reverse)
-		trail: trail allButFirst.! !
+			value: trail value
+			children: trail leftNodes, focus asOrderedCollection, trail rightNodes)
+		trail: trail path.! !
 
 
 !TreeZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 22:06'!
@@ -49,16 +65,16 @@ focus
 	^ focus.! !
 
 
-!TreeZipper methodsFor: 'private' stamp: 'fbs 12/30/2010 22:04'!
-focus: aTree trail: anOrderedCollection
+!TreeZipper methodsFor: 'private' stamp: 'fbs 12/31/2010 16:37'!
+focus: aTree trail: aTreeZipperNode
 	focus := aTree.
-	trail := anOrderedCollection.! !
+	trail := aTreeZipperNode.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 TreeZipper class
 	instanceVariableNames: ''!
 
-!TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 22:04'!
+!TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
-	^ self new focus: aTree trail: OrderedCollection new.! !
+	^ self new focus: aTree trail: nil.! !
