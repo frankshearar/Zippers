@@ -43,6 +43,11 @@ value: anObject children: aCollection
 		[self value = anObject value and:
 			[self children = anObject children]].! !
 
+
+!ZTree methodsFor: 'enumerating' stamp: 'fbs 12/31/2010 19:21'!
+zipper
+	^ TreeZipper on: self.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 ZTree class
@@ -55,10 +60,7 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
-ction.! !
-ableZTree new.
-	mutableCopy value: self value.
-	mutableCopy children addAll: (self children collect: #asMutableTree).
+n collect: #asMutableTree).
 	^ mutableCopy.! !
 
 !ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 22:30'!

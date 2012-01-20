@@ -144,6 +144,22 @@ testRightMovesToRightSibling
 	
 	self assert: zipper focus = (tree children at: 2).! !
 
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:31'!
+testRootAtChildNodeReturnsRoot
+	| tree zipper |
+	tree := self triangleTree.
+	zipper := tree zipper down.
+	
+	self assert: zipper root = tree.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:29'!
+testRootAtRootReturnsRoot
+	| tree zipper |
+	tree := self emptyTree.
+	zipper := tree zipper.
+	
+	self assert: zipper root == tree.! !
+
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:21'!
 testUpAtRootNodeSignalsException
 	| zipper |
@@ -175,52 +191,46 @@ testChangeReplacesValue
 	self assert: zipper right focus value = 3 description: 'Position changed'.
 	self assert: zipper up focus value = 1 description: 'Position changed'.
 	! !
-zipper := zipper delete.
-	
-	self assert: zipper focus value = 2 description: 'Zipper focused on wrong sibling'.
-	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 4}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:16'!
-testDeleteYoungestSiblingFocusesOnOlderSibling
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 19:31'!
+testChangeToReplacesValue
 	| tree zipper |
-	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
-	zipper := tree zipper down right right.
-	self assert: zipper focus value = 4.
-	zipper := zipper delete.
+	tree := self triangleTree.
+	zipper := (TreeZipper on: tree) down.
 	
-	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
-	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}) description: 'Wrong thing deleted'.! !
+	zipper := zipper changeTo: 5.
+	self assert: zipper focus value = 5 description: 'No change made'.
+	self assert: zipper right focus value = 3 description: 'Position changed'.
+	self assert: zipper up focus value = 1 description: 'Position changed'.
+	! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:46'!
 testInsertDownInsertsChild
 	| tree zipper |
 	tree := ZTree value: 0.
 	zipper := tree zipper.
 	
-	zipper := zipper insertDown: (ZTree value: 1).
+	zipper := zipper insertDown: 1.
 	"self should: [zipper up] raise: ZipperNavigation."
 	self assert: zipper focus value = 1 description: 'Zipper not focused on new node'.
 	self shouldnt: [zipper up] raise: ZipperNavigation.
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:17'!
-testInsertDownOnEmptyTreeIsATreeWithOneNode
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 19:43'!
+testInsertLeftInsertsSibling
 	| tree zipper |
-	tree := ZTree empty.
-	zipper := tree zipper.
-	
-	zipper := zipper insertDown: (ZTree value: 0).
-	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
-	
-	self assert: zipper root = (ZTree value: 0).! !
+	tree := self emptyTree.
+	zipper := tree zipper.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
-testInsertLeftInsertsImmediatelyOlderSibling
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:52'!
+testInsertRightInsertsYoungerSibling
 	| tree zipper |
-	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}.
+	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
-	zipper := zipper down right insertLeft: (ZTree value: 3).
+	zipper := zipper down insertRight: 2.
+	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
+zipper := zipper down right insertLeft: (ZTree value: 3).
 	self assert: zipper focus value = 3 description: 'Zipper not focused on new node'.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
 

@@ -51,6 +51,13 @@ right
 			leftNodes: (trail leftNodes addFirst: focus; yourself)
 			rightNodes: trail rightNodes allButFirst).! !
 
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 23:29'!
+root
+	"Return the possibly new/mutated tree under navigation"
+	^ trail
+		ifNil: [focus]
+		ifNotNil: [self up root]! !
+
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/31/2010 17:26'!
 up
 	trail ifNil: [^ ZipperNavigation signal: 'Up at the root node'].
@@ -81,6 +88,41 @@ change: aBlock
 			value: (aBlock value: focus value)
 			children: focus children)
 		trail: trail.! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:32'!
+changeTo: newValue
+	^ TreeZipper new
+		focus: (ZTree
+			value: newValue
+			children: focus children)
+		trail: trail.! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 23:46'!
+insertDown: anObject
+	^ TreeZipper new
+		focus: (ZTree value: anObject)
+		trail: (TreeZipperNode
+			path: trail
+			value: focus value
+			leftNodes: OrderedCollection new
+			rightNodes: focus children).! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:45'!
+insertLeft: anObject! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 00:10'!
+insertRight: anObject
+	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
+	^ TreeZipper new
+		focus: focus
+		trail: (TreeZipperNode
+			path: trail path
+			value: trail value
+			leftNodes: trail leftNodes
+			rightNodes: (trail rightNodes copy addFirst: (ZTree value: anObject); yourself))! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 12/31/2010 19:47'!
+insertUp: anObject! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
