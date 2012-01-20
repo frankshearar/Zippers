@@ -153,6 +153,11 @@ balanceDSW
 	"Return a balanced copy of self."
 	^ self asMutableTree balance asImmutableTree.! !
 
+!ZTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:16'!
+balanceDSW2
+	"Return a balanced copy of self."
+	^ self asMutableTree balance asImmutableTree2.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 ZTree class
@@ -171,8 +176,5 @@ value: anObject
 			children: OrderedCollection new ]! !
 
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
-value: anObject children: aCollection
-	^ self new value: anObject children: aCollection.! !
-lass methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !

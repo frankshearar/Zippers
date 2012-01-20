@@ -16,6 +16,13 @@ asImmutableTree
 		value: self value
 		children: (self children collect: #asImmutableTree).! !
 
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:15'!
+asImmutableTree2
+	"Return an immutable version of self."
+	ZTree adoptInstance: self.
+	self children do: [:child | ZTree adoptInstance: child].
+	^ self.! !
+
 !MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 07:49'!
 balance
 	"Return myself, only balanced. Use the DSW algorithm."
@@ -119,11 +126,3 @@ initialize
 !MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
 printString
 	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
- as ZTree."
-	children := OrderedCollection new.! !
-
-
-!MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
-printString
-	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
-! !

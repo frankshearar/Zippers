@@ -57,6 +57,10 @@ rebalanced
 rebalancedDSW
 	^ self class tree: tree balanceDSW.! !
 
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:16'!
+rebalancedDSW2
+	^ self class tree: tree balanceDSW2.! !
+
 
 !BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:30'!
 collect: aBlock
@@ -94,8 +98,6 @@ tree: aBinaryTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-with: anObject
-	^ self new tree: (ZTree value: anObject).! !
-BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
+/30/2011 17:08'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !

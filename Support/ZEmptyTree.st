@@ -34,9 +34,10 @@ printString
 	^ '<>'.! !
 
 
-!ZEmptyTree methodsFor: 'as yet unclassified' stamp: 'fbs 4/28/2011 21:26'!
-asImmutableTreeOfType: aClass
-	^ self.! !
-hodsFor: 'printing' stamp: 'fbs 2/25/2011 17:58'!
-printString
-	^ '<>'.! !
+!ZEmptyTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:17'!
+asImmutableTree
+	^ self. ! !
+
+!ZEmptyTree methodsFor: 'converting' stamp: 'fbs 5/1/2011 10:17'!
+asImmutableTree2
+	^ self. ! !
