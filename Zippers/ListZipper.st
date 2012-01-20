@@ -12,6 +12,14 @@ focus - the (sub)list on which we are currently focussed.
 trail - the steps taken to focus on the focus instance variable.!
 
 
+!ListZipper methodsFor: 'mutating' stamp: 'fbs 12/30/2010 20:50'!
+change: aBlock
+	"Given an arity 1 block, replace the current value in the list with that of evaluating aBlock on that value."
+	
+	^ ListZipper new
+		focus: (aBlock value: focus first) asOrderedCollection, focus allButFirst
+		trail: trail.! !
+
 
 !ListZipper methodsFor: 'accessing' stamp: 'fbs 12/28/2010 16:27'!
 focus
@@ -48,13 +56,4 @@ ListZipper class
 !ListZipper class methodsFor: 'instance creation' stamp: 'fbs 12/28/2010 16:48'!
 on: aSequenceableCollection
 	^ self new focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
-trail: (trail copy addFirst: focus first; yourself)! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-ListZipper class
-	instanceVariableNames: ''!
-
-!ListZipper class methodsFor: 'instance creation' stamp: 'fbs 12/28/2010 16:48'!
-on: aSequenceableCollection
-	^ self new focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
+tion asOrderedCollection trail: OrderedCollection new.! !
