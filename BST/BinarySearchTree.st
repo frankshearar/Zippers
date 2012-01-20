@@ -49,9 +49,13 @@ tree: aTree
 asOrderedCollection
 	^ (self collect: [:each | each ]) asOrderedCollection.! !
 
-!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 21:32'!
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:17'!
 rebalanced
-	^ self class tree: (tree asMutableTree balance asImmutableTreeOfType: ZBinaryTree)! !
+	^ self class tree: self asOrderedCollection asBalancedBinaryTree.! !
+
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/29/2011 19:10'!
+rebalancedDSW
+	^ self class tree: tree balanceDSW.! !
 
 
 !BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/28/2011 17:43'!
@@ -87,13 +91,9 @@ BinarySearchTree class
 tree: aBinaryTree
 	^ self new tree: aBinaryTree.! !
 
-!BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/28/2011 12:46'!
-with: anObject
-	^ self new tree: (ZBinaryTree value: anObject).! !
- 'instance creation' stamp: 'fbs 4/28/2011 12:46'!
-tree: aBinaryTree
-	^ self new tree: aBinaryTree.! !
-
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
+with: anObject
+	^ self new tree: (ZTree value: anObject).! !
+BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !

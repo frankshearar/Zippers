@@ -98,6 +98,27 @@ zipper
 	^ TreeZipper on: self.! !
 
 
+!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 17:28'!
+depth
+	self hasChildren ifFalse: [ ^ 1 ].
+	
+	^ 1 + (children collect: #depth) max.! !
+
+!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 15:32'!
+hasChildren
+	^ (children reject: #isEmpty) isEmpty not.! !
+
+!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 17:31'!
+isBalanced
+	| depths |
+	self hasChildren ifFalse: [ ^ true ].
+
+	depths := (self children collect: #depth) asSortedCollection.
+	"A tree with one subtree of depth 1is balanced."
+	(depths size = 1) ifTrue: [ ^ depths first = 1 ].
+	"A tree with many subtrees is balanced if there is at most a difference of 1 between the depths of its subtrees."
+	^ (depths last - depths first) <= 1.! !
+
 !ZTree methodsFor: 'testing' stamp: 'fbs 2/24/2011 17:26'!
 isEmpty
 	^ false.! !
@@ -113,6 +134,16 @@ asMutableTree
 	mutableCopy value: self value.
 	mutableCopy children addAll: (self children collect: #asMutableTree).
 	^ mutableCopy.! !
+
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:09'!
+balance
+	"Return a balanced copy of self."
+	^ self asOrderedCollection asBalancedBinaryTree.! !
+
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:09'!
+balanceDSW
+	"Return a balanced copy of self."
+	^ self asMutableTree balance asImmutableTreeOfType: ZBinaryTree.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -134,40 +165,7 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
-odsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
-value: anObject children: aCollection
-	^ self new value: anObject children: aCollection.! !
 !
-
-!ZTree methodsFor: 'testing' stamp: 'fbs 4/30/2011 17:31'!
-isBalanced
-	| depths |
-	self hasChildren ifFalse: [ ^ true ].
-
-	depths := (self children collect: #depth) asSortedCollection.
-	"A tree with one subtree of depth 1is balanced."
-	(depths size = 1) ifTrue: [ ^ depths first = 1 ].
-	"A tree with many subtrees is balanced if there is at most a difference of 1 between the depths of its subtrees."
-	^ (depths last - depths first) <= 1.! !
-
-!ZTree methodsFor: 'testing' stamp: 'fbs 2/24/2011 17:26'!
-isEmpty
-	^ false.! !
-
-
-!ZTree methodsFor: 'initialize-release' stamp: 'fbs 12/30/2010 23:34'!
-initialize
-	super initialize.
-	children := OrderedCollection new.! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-ZTree class
-	instanceVariableNames: ''!
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/22/2011 21:41'!
-empty
-	^ Empty ifNil: [Empty := ZEmptyTree new].! !
 
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
 value: anObject

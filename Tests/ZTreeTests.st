@@ -165,41 +165,30 @@ testAsMutableTreeSingleNode
 	self assert: t value = 0.
 	self assert: t left isEmpty.
 	self assert: t right isEmpty.! !
-hildrenReturnsFalse
-	| a b |
-	a := ZTree value: 1 children: {ZTree value: 2}.
-	b := ZTree value: 1 children: {ZTree value: 1}.
-	self deny: a = b.! !
-
-!ZTreeTests methodsFor: 'testing - comparing' stamp: 'fbs 12/31/2010 23:39'!
-testEqualsUnequalTreesInValueReturnsFalse
-	| a b |
-	a := ZTree value: 1 children: {ZTree value: 2}.
-	b := ZTree value: 2 children: {ZTree value: 2}.
-	self deny: a = b.! !
-
-!ZTreeTests methodsFor: 'testing - comparing' stamp: 'fbs 4/27/2011 17:45'!
-testEqualsWithEmptyLeftSubtree
-	| a b |
-	a := ZTree value: 1 children: {ZTree empty. ZTree value: 2}.
-	b := ZTree value: 1 children: {ZTree empty. ZTree value: 2}.
-	self assert: a = b.! !
-
-!ZTreeTests methodsFor: 'testing - comparing' stamp: 'fbs 4/27/2011 17:46'!
-testEqualsWithEmptyRightSubtree
-	| a b |
-	a := ZTree value: 1 children: {ZTree value: 2. ZTree empty}.
-	b := ZTree value: 1 children: {ZTree value: 2}.
-	self assert: a = b.! !
-
-!ZTreeTests methodsFor: 'testing - comparing' stamp: 'fbs 4/27/2011 17:44'!
-testEqualsWithEmptySubtreeVersusNoChildren
-	| a b |
-	a := ZTree value: 1.
-	b := ZTree value: 1 children: {ZTree empty}.
-	self assert: a = b.! !
 
 
-!ZTreeTests methodsFor: 'testing - instance creation' stamp: 'fbs 2/25/2011 17:55'!
-testValueWithEmptyTreeReturnsEmptyTree
-	self assert: ZTree empty == (ZTree value: ZTree empty).! !
+!ZTreeTests methodsFor: 'testing - testing' stamp: 'fbs 4/30/2011 17:27'!
+testDepth
+	self assert: ZTree empty depth = 0.
+	self assert: (ZTree value: 1) depth = 1.
+	self assert: (ZTree value: 1 children: {ZTree empty.}) depth = 1.
+	self assert: (ZTree value: 1 children: {ZTree value: 2}) depth = 2.
+	self assert: (ZTree value: 1 children: {ZTree value: 2. ZTree value: 2 children: {ZTree value: 3}}) depth = 3.! !
+
+!ZTreeTests methodsFor: 'testing - testing' stamp: 'fbs 4/30/2011 15:31'!
+testHasChildren
+	self deny: ZTree empty hasChildren.
+	self deny: (ZTree value: 0) hasChildren.
+	self deny: (ZTree value: 0 children: {ZTree empty}) hasChildren.
+	self assert: (ZTree value: 0 children: {ZTree value: 1}) hasChildren.! !
+
+!ZTreeTests methodsFor: 'testing - testing' stamp: 'fbs 4/30/2011 17:21'!
+testIsBalanced
+	self assert: ZTree empty isBalanced.
+	self assert: (ZTree value: 0) isBalanced.
+	self assert: (ZTree value: 0 children: {ZTree empty}) isBalanced.
+	self assert: (ZTree value: 0 children: {ZTree value: 1}) isBalanced.
+	self assert: (ZTree value: 0 children: {ZTree empty. ZTree empty}) isBalanced.
+	
+	self deny: (ZTree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}) isBalanced.
+	self deny: (ZTree value: 0 children: {ZTree empty. ZTree value: 1 children: {ZTree value: 2}}) isBalanced.! !

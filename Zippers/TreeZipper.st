@@ -216,27 +216,27 @@ insertDown: anObject
 				leftNodes: OrderedCollection new
 				rightNodes: focus children) ]! !
 
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 15:49'!
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 17:05'!
 insertLeft: anObject
 	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
 	^ TreeZipper new
-		focus: focus
-		trail: (TreeZipperNode
-			path: trail path
-			value: trail value
-			leftNodes: (trail leftNodes copy addFirst: (ZTree value: anObject); yourself)
-			rightNodes: trail rightNodes)! !
-
-!TreeZipper methodsFor: 'mutating' stamp: 'fbs 1/1/2011 00:10'!
-insertRight: anObject
-	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
-	^ TreeZipper new
-		focus: focus
+		focus: (ZTree value: anObject)
 		trail: (TreeZipperNode
 			path: trail path
 			value: trail value
 			leftNodes: trail leftNodes
-			rightNodes: (trail rightNodes copy addFirst: (ZTree value: anObject); yourself))! !
+			rightNodes: (trail rightNodes copy addFirst: focus; yourself))! !
+
+!TreeZipper methodsFor: 'mutating' stamp: 'fbs 4/30/2011 17:06'!
+insertRight: anObject
+	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
+	^ TreeZipper new
+		focus: (ZTree value: anObject)
+		trail: (TreeZipperNode
+			path: trail path
+			value: trail value
+			leftNodes: (trail leftNodes copy addLast: focus; yourself)
+			rightNodes: trail rightNodes)! !
 
 
 !TreeZipper methodsFor: 'copying' stamp: 'fbs 2/16/2011 07:45'!
@@ -258,4 +258,4 @@ TreeZipper class
 !TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
 	^ self new focus: aTree trail: nil.! !
-e trail: nil.! !
+ trail: nil.! !

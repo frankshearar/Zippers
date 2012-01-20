@@ -65,16 +65,15 @@ testCollectExecutesBlockOncePerNode
 	self assert: items = (#(1 2 3) * 2) asOrderedCollection.! !
 
 
-!BinarySearchTreeTest methodsFor: 'testing - converting' stamp: 'fbs 4/28/2011 06:52'!
+!BinarySearchTreeTest methodsFor: 'testing - converting' stamp: 'fbs 4/30/2011 17:52'!
 testRebalance
 	| bst zipper |
 	bst := BinarySearchTree tree: ZTree empty.
 	"Construct a degenerate BST."
 	1 to: 10 do: [:i | bst := bst add: i].
 	
-	"We don't check the entire structure, but we know it should look like this:"
-	"(7 (4 (2 (1), (3)), (6 (5))), (9 (8), (10)))"
 	zipper := bst rebalanced zipper.
-	self assert: zipper focus value = 7.
-	self assert: zipper down focus value = 4.
+	self assert: zipper root isBalanced.
+	self assert: (1 to: 10) asOrderedCollection = (InOrderTraversal new collect: #yourself using: zipper) asOrderedCollection.! !
+self assert: zipper down focus value = 4.
 	self assert: zipper down right focus value = 9.! !

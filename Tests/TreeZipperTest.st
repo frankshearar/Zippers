@@ -513,12 +513,13 @@ testInsertDownOnEmptyTreeIsATreeWithOneNode
 	
 	self assert: zipper root = (ZTree value: 0).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:47'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 17:01'!
 testInsertLeftInsertsImmediatelyOlderSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}.
 	zipper := tree zipper.
 	zipper := zipper down right insertLeft: 3.
+	self assert: zipper focus value = 3 description: 'Zipper not focused on new node'.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
 
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:20'!
@@ -529,13 +530,22 @@ testInsertLeftInsertsOlderSibling
 	zipper := zipper down insertLeft: 2.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:52'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 17:02'!
 testInsertRightInsertsYoungerSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
 	zipper := zipper down insertRight: 2.
+	self assert: zipper focus value = 2 description: 'Zipper not focused on new node'.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 16:57'!
+testInsertRightOnEmptyTreeInsertsYoungerSibling
+	| tree zipper |
+	tree := ZTree value: 0 children: {ZTree empty}.
+	zipper := tree zipper.
+	zipper := zipper down insertRight: 2.
+	self assert: zipper root = (ZTree value: 0 children: {ZTree empty. ZTree value: 2}).! !
 
 
 !TreeZipperTest methodsFor: 'testing - copying' stamp: 'fbs 2/25/2011 08:06'!
@@ -560,25 +570,7 @@ testIsEmptyOnNonEmptyTreeAlwaysReturnsFalse
 	self deny: zipper isEmpty.
 	
 	self deny: zipper down isEmpty.! !
-t methodsFor: 'testing - navigating' stamp: 'fbs 12/31/2010 23:29'!
-testRootAtRootReturnsRoot
-	| tree zipper |
-	tree := self emptyTree.
-	zipper := tree zipper.
-	
-	self assert: zipper root == tree.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:26'!
-testUpAtRootNodeSignalsException
-	| zipper |
-	zipper := self triangleTree zipper.
-	
-	self
-		should: [zipper up]
-		raise: ZipperNavigation.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/13/2011 19:14'!
-testUpOrElseAtRootNodeRunsBlock
+lseAtRootNodeRunsBlock
 	| ran zipper |
 	zipper := self triangleTree zipper.
 	
