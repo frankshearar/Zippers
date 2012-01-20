@@ -1,5 +1,5 @@
-Object subclass: #TreeZipper
-	instanceVariableNames: 'focus trail'
+BaseZipper subclass: #TreeZipper
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
@@ -9,28 +9,33 @@ I am a zipper for navigating over a variable-arity tree, that is a tree that may
 That is, I allow one to navigate arbitrarily over a tree structure (a ZTree), and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:33'!
-down
-	"Return a Zipper focusing on the first child element of this node."
-	^ self move: #safeDown.! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:37'!
-downOrElse: aBlock
-	^ self move: #safeDown orElse: aBlock.! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:34'!
-left
-	^ self move: #safeLeft.! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:36'!
-leftOrElse: aBlock
-	^ self move: #safeLeft orElse: aBlock.! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:34'!
-right
-	^ self move: #safeRight.! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:36'!
+
+
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/17/2011 08:20'!
+children
+	^ self focus children! !
+
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 23:11'!
+isBranch
+	^ self focus children notEmpty! !
+
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:56'!
+isEmpty
+	^ focus isEmpty.! !
+
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 22:43'!
+newFocusOn: anObject
+	^ ZTree value: anObject children: #().! !
+
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 22:44'!
+newFocusOn: anObject children: aCollection
+	^ ZTree value: anObject children: aCollection.! !
+avigating' stamp: 'fbs 2/16/2011 17:36'!
 rightOrElse: aBlock
 	^ self move: #safeRight orElse: aBlock.! !
 
