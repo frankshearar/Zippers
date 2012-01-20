@@ -3,6 +3,9 @@ DepthTraversal subclass: #InOrderTraversal
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
+!InOrderTraversal commentStamp: 'fbs 2/26/2011 23:07' prior: 0!
+In-order traversal only really makes sense for binary trees: with n-ary trees, "in order" means "process the first child, then the current node, then the remaining child nodes."!
+
 
 !InOrderTraversal methodsFor: 'private' stamp: 'fbs 2/25/2011 10:18'!
 depthFirstTraversal: aZipper doing: aBlock
@@ -30,16 +33,5 @@ collect: aBlock using: aZipper
 		add: value;
 		addAll: right;
 		yourself.! !
-ock.! !
-s: aBlock using: move second]
-		ifFalse: [ #() asOrderedCollection ].
-
-	^ left copy
-		addAll: collected;
-		addAll: right;
-		yourself.! !
-
-
-!InOrderTraversal methodsFor: 'private' stamp: 'fbs 2/25/2011 10:18'!
-depthFirstTraversal: aZipper doing: aBlock
+r doing: aBlock
 	^ (self collect: [:each | each] using: aZipper) do: aBlock.! !

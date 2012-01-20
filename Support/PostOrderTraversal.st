@@ -3,6 +3,9 @@ DepthTraversal subclass: #PostOrderTraversal
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
+!PostOrderTraversal commentStamp: 'fbs 2/26/2011 23:11' prior: 0!
+I provide a post-order traversal of an n-tree: I traverse all child nodes before processing the current node.!
+
 
 !PostOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/25/2011 17:33'!
 collect: aBlock using: aZipper
@@ -26,12 +29,5 @@ collect: aBlock using: aZipper
 depthFirstTraversal: aZipper doing: aBlock
 	^ (self collect: [:each | each] using: aZipper) do: aBlock.
 ! !
-Block using: move second)].
-
-	^ collected.! !
-
-
-!PostOrderTraversal methodsFor: 'private' stamp: 'fbs 2/21/2011 18:01'!
-depthFirstTraversal: aZipper doing: aBlock
-	^ (self collect: [:each | each] using: aZipper) do: aBlock.
+t: [:each | each] using: aZipper) do: aBlock.
 ! !
