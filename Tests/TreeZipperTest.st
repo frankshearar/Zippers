@@ -579,16 +579,15 @@ testIsEmptyOnNonEmptyTreeAlwaysReturnsFalse
 	self deny: zipper isEmpty.
 	
 	self deny: zipper down isEmpty.! !
-:= self emptyTree.
-	zipper := tree zipper.
-	zipper rightOrElse: [:focus | node := focus ].
-	
-	self assert: node = zipper focus.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/13/2011 19:20'!
-testUpOrElseReturnsToParentNode
-	| ran tree zipper |
-	tree := self triangleTree.
+
+!TreeZipperTest methodsFor: 'testing - sharing' stamp: 'fbs 11/1/2011 17:24'!
+testZipperShouldShareSubstructures
+	| t newTree |
+	t := self nestedTriangleTree.
+	newTree := (t zipper down changeTo: 5) root.
+	self assert: newTree children second == t children second.! !
+e := self triangleTree.
 	zipper := tree zipper.
 	ran := false.
 	zipper := zipper down upOrElse: [ran := true].
