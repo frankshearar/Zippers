@@ -93,6 +93,10 @@ value: anObject children: aCollection
 			[self childrenEqual: anObject children]].! !
 
 
+!ZTree methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:29'!
+collect: aBlock
+	^ InOrderTraversal new traverse: self collecting: aBlock.! !
+
 !ZTree methodsFor: 'enumerating' stamp: 'fbs 12/31/2010 19:21'!
 zipper
 	^ TreeZipper on: self.! !
@@ -135,15 +139,19 @@ asMutableTree
 	mutableCopy children addAll: (self children collect: #asMutableTree).
 	^ mutableCopy.! !
 
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 22:30'!
+asOrderedCollection
+	^ self collect: #yourself! !
+
 !ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:09'!
 balance
 	"Return a balanced copy of self."
 	^ self asOrderedCollection asBalancedBinaryTree.! !
 
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 20:54'!
+!ZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 21:18'!
 balanceDSW
 	"Return a balanced copy of self."
-	^ self asMutableTree balance asImmutableTreeOfType: ZTree.! !
+	^ self asMutableTree balance asImmutableTree.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -165,17 +173,6 @@ value: anObject
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
-n.! !
-!
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 2/25/2011 17:53'!
-value: anObject
-	^ anObject = ZTree empty
-		ifTrue: [ ZTree empty ]
-		ifFalse: [ self new
-			value: anObject
-			children: OrderedCollection new ]! !
-
-!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
+lass methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !

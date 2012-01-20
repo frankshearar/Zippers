@@ -45,9 +45,9 @@ tree: aTree
 	tree := aTree.! !
 
 
-!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 2/28/2011 17:32'!
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 22:30'!
 asOrderedCollection
-	^ (self collect: [:each | each ]) asOrderedCollection.! !
+	^ tree asOrderedCollection.! !
 
 !BinarySearchTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 17:17'!
 rebalanced
@@ -58,9 +58,9 @@ rebalancedDSW
 	^ self class tree: tree balanceDSW.! !
 
 
-!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/28/2011 17:43'!
+!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:30'!
 collect: aBlock
-	^ InOrderTraversal new traverse: tree collecting: aBlock.! !
+	^ tree collect: aBlock.! !
 
 
 !BinarySearchTree methodsFor: 'initialize-release' stamp: 'fbs 2/24/2011 17:33'!
@@ -92,6 +92,8 @@ tree: aBinaryTree
 	^ self new tree: aBinaryTree.! !
 
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
+with: anObject
+	^ self new tree: (ZTree value: anObject).! !
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
 BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!

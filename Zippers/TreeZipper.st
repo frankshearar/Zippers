@@ -101,7 +101,7 @@ safeRight
 		
 	^ {success. zipper.}! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 2/28/2011 22:46'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 4/30/2011 22:33'!
 safeUp
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -113,7 +113,7 @@ safeUp
 		ifTrue: [ self class new
 			focus: (ZTree
 				value: trail value
-				children: trail leftNodes reverse, focus asOrderedCollection, trail rightNodes)
+				children: trail leftNodes reverse, {focus} , trail rightNodes)
 			trail: trail path ]
 		ifFalse: [ self ].
 		
@@ -258,4 +258,5 @@ TreeZipper class
 !TreeZipper class methodsFor: 'instance creation' stamp: 'fbs 12/31/2010 16:36'!
 on: aTree
 	^ self new focus: aTree trail: nil.! !
+e trail: nil.! !
  trail: nil.! !

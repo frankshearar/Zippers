@@ -7,21 +7,14 @@ ZTree subclass: #MutableZTree
 I implement a mutable version of ZTree. My sole reason for being is to provide a boundary within which mutable stuff can happen... like rebalancing a tree using the Day/Stout/Warren algorithm.!
 
 
-!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 12:48'!
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/30/2011 21:32'!
 asImmutableTree
-	^ self asImmutableTreeOfType: ZTree.! !
-
-!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 21:26'!
-asImmutableTreeOfType: aClass
 	"Return an immutable version of self."
-	self children isEmpty ifTrue: [^ aClass value: self value].
+	self children isEmpty ifTrue: [^ ZTree value: self value].
 
-	^ aClass
+	^ ZTree
 		value: self value
-		children: (self children
-			collect: [:each | each
-				ifNil: [ZTree empty]
-				ifNotNil: [each asImmutableTreeOfType: aClass]]).! !
+		children: (self children collect: #asImmutableTree).! !
 
 !MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 07:49'!
 balance
@@ -120,6 +113,13 @@ value: anObject
 initialize
 	super initialize.
 	"We have 'children' rather than 'left' and 'right' so that we have the same shape as ZTree."
+	children := OrderedCollection new.! !
+
+
+!MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
+printString
+	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
+ as ZTree."
 	children := OrderedCollection new.! !
 
 
