@@ -14,25 +14,24 @@ change: aBlock
 	"aBlock is a unary block whose evaluated value we use to replace the current focus."
 	^ self changeTo: (aBlock value: focus value).! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 11/1/2011 08:22'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 15:53'!
 changeTo: newValue
 	^ self class new
-		focus: (self newFocusOn: newValue children: focus children)
+		focus: newValue
 		trail: (trail class "This could be a normal context or the end context."
 			path: trail path
-			value: trail value
 			leftNodes: trail leftNodes
 			rightNodes: trail rightNodes
-			visitedNodes: trail visitedNodes , {focus}
+			visitedNodes: trail visitedNodes
 			changed: true).! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 10/18/2011 16:28'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 16:30'!
 delete
 	trail isEnd ifTrue: [^ ZipperNavigation signal: 'Delete at top'].
 	
 	(trail leftNodes isEmpty and: [trail rightNodes isEmpty]) ifTrue:
 		[^ self class new
-			focus: (self newFocusOn: trail value) 
+			focus: (self newFocusOn: trail parentNode)
 			trail: trail path].
 			
 	trail leftNodes isEmpty ifTrue:
@@ -40,7 +39,6 @@ delete
 			focus: trail rightNodes first
 			trail: (TreeZipperNode
 				path: trail path
-				value: trail value
 				leftNodes: trail leftNodes
 				rightNodes: trail rightNodes allButFirst
 				visitedNodes: trail visitedNodes
@@ -50,13 +48,12 @@ delete
 		focus: trail leftNodes first
 		trail: (TreeZipperNode
 			path: trail path
-			value: trail value
 			leftNodes: trail leftNodes allButFirst
 			rightNodes: trail rightNodes
 			visitedNodes: trail visitedNodes
 			changed: true).! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 10/31/2011 21:51'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 12:07'!
 insertDown: anObject
 	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tree: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
 
@@ -68,33 +65,30 @@ insertDown: anObject
 				ifFalse: [ self newFocusOn: anObject ])
 			trail: (TreeZipperNode
 				path: trail
-				value: focus value
 				leftNodes: {}
 				rightNodes: focus children
-				visitedNodes: trail visitedNodes , {focus}
+				visitedNodes: trail visitedNodes, {focus}
 				changed: true) ]! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 10/31/2011 21:51'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 11:46'!
 insertLeft: anObject
 	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
 	^ self class new
 		focus: (self newFocusOn: anObject)
 		trail: (TreeZipperNode
 			path: trail path
-			value: trail value
 			leftNodes: trail leftNodes
 			rightNodes: ({focus} , trail rightNodes)
 			visitedNodes: trail visitedNodes
 			changed: true)! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 10/31/2011 21:51'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 11:46'!
 insertRight: anObject
 	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
 	^ self class new
 		focus: (self newFocusOn: anObject)
 		trail: (TreeZipperNode
 			path: trail path
-			value: trail value
 			leftNodes: (trail leftNodes , {focus})
 			rightNodes: trail rightNodes
 			visitedNodes: trail visitedNodes
@@ -112,7 +106,7 @@ changedRoot
 changedUp
 	^ self move: #safeChangedUp.! !
 
-!BaseZipper methodsFor: 'private navigating' stamp: 'fbs 10/19/2011 17:26'!
+!BaseZipper methodsFor: 'private navigating' stamp: 'fbs 12/20/2011 12:22'!
 safeChangedUp
 	"When part of the structure has changed, return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -123,7 +117,7 @@ safeChangedUp
 	zipper := (success = #success)
 		ifTrue: [ self class new
 					focus: (self
-						newFocusOn: trail value
+						newFocusOn: trail parentNode
 						children: trail leftNodes reverse, {focus} , trail rightNodes)
 					trail: trail path ]
 		ifFalse: [ self ].
@@ -193,7 +187,7 @@ root
 			ifTrue: [self changedUp changedRoot]
 			ifFalse: [self up root]]! !
 
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 10/31/2011 21:52'!
+!BaseZipper methodsFor: 'navigating' stamp: 'fbs 12/20/2011 12:06'!
 safeDown
 	"Return a pair whose first element tells us whether we successfully went down (represented by the value #success), and a Zipper. If yes, a Zipper focusing on the first child element of this node. If not, a Zipper focused on where we are."
 	| success zipper |
@@ -206,15 +200,14 @@ safeDown
 			focus: focus children first
 			trail: (TreeZipperNode
 					path: trail
-					value: focus value
 					leftNodes: {}
 					rightNodes: focus children allButFirst
-					visitedNodes: trail visitedNodes , {focus}
+					visitedNodes: trail visitedNodes, {focus}
 					changed: false)
 		] ifFalse: [ self ].
 	^ {success. zipper.}! !
 
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 10/31/2011 21:53'!
+!BaseZipper methodsFor: 'navigating' stamp: 'fbs 12/20/2011 11:46'!
 safeLeft
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -228,7 +221,6 @@ safeLeft
 			focus: trail leftNodes first
 			trail: (TreeZipperNode
 				path: trail path
-				value: trail value
 				leftNodes: (trail leftNodes allButFirst)
 				rightNodes: ({focus} , trail rightNodes)
 				visitedNodes: trail visitedNodes
@@ -236,7 +228,7 @@ safeLeft
 		ifFalse: [ self ].
 	^ {success. zipper.}! !
 
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 10/31/2011 21:53'!
+!BaseZipper methodsFor: 'navigating' stamp: 'fbs 12/20/2011 11:47'!
 safeRight
 	"Return a pair (successfully moved, zipper on new location)."
 	| success zipper |
@@ -250,7 +242,6 @@ safeRight
 			focus: trail rightNodes first
 			trail: (TreeZipperNode
 				path: trail path
-				value: trail value
 				leftNodes: ({focus} , trail leftNodes)
 				rightNodes: trail rightNodes allButFirst
 				visitedNodes: trail visitedNodes
@@ -317,6 +308,14 @@ move: directionSelector orElse: aBlock
 		ifFalse: [ aBlock cull: self focus ].! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+BaseZipper class
+	instanceVariableNames: ''!
+
+!BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 10/18/2011 16:22'!
+on: aTree
+	^ self new focus: aTree trail: TreeZipperNode end.! !
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 BaseZipper class
 	instanceVariableNames: ''!

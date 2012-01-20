@@ -178,48 +178,48 @@ testUpOnRootNodeFails
 	self should: [zipper up] raise: ZipperNavigation.! !
 
 
-!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 16:15'!
+!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:30'!
 testInsertDownInsertsLeftSubtree
 	| tree zipper |
 	tree := ZTree value: 0.
 	zipper := BinaryTreeZipper on: tree.
 	
-	zipper := zipper insertDown: 1.
-	self assert: zipper focus value = 1 description: 'Zipper not focused on new node'.
+	zipper := zipper insertDown: (ZTree value: 1).
+	self assert: zipper focus = (ZTree value: 1) description: 'Zipper not focused on new node'.
 	self shouldnt: [zipper up] raise: ZipperNavigation.
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 11/1/2011 08:00'!
+!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:39'!
 testInsertDownOnEmptyTreeIsATreeWithOneNode
 	| tree zipper |
 	tree := ZTree empty.
 	zipper := BinaryTreeZipper on: tree.
 	
-	zipper := zipper insertDown: 0.
+	zipper := zipper insertDown: (ZTree value: 0).
 	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
 	
 	self assert: zipper root = (ZTree value: 0).! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 16:35'!
+!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:30'!
 testInsertLeftInsertsLeftSubtree
 	| tree zipper |
 	tree := ZTree value: 0.
 	zipper := BinaryTreeZipper on: tree.
 	
-	zipper := zipper insertLeft: 1.
+	zipper := zipper insertLeft: (ZTree value: 1).
 	self assert: zipper focus value = 1 description: 'Zipper not focused on new node'.
 	self shouldnt: [zipper up] raise: ZipperNavigation.
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 11/1/2011 07:49'!
+!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:31'!
 testInsertLeftOnEmptyTreeIsATreeWithOneNode
 	| tree zipper |
 	tree := ZTree empty.
 	zipper := BinaryTreeZipper on: tree.
 	
-	zipper := zipper insertDown: 0.
+	zipper := zipper insertDown: (ZTree value: 0).
 	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
 	
 	self assert: zipper root = (ZTree value: 0).! !
@@ -235,13 +235,13 @@ testInsertRightInsertsRightSubtree
 	self shouldnt: [zipper up] raise: ZipperNavigation.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree empty. ZTree value: 1}).! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 11/1/2011 07:50'!
+!BinaryTreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:39'!
 testInsertRightOnEmptyTreeIsATreeWithOneNode
 	| tree zipper |
 	tree := ZTree empty.
 	zipper := BinaryTreeZipper on: tree.
 	
-	zipper := zipper insertRight: 0.
+	zipper := zipper insertRight: (ZTree value: 0).
 	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
 	
 	self assert: zipper root = (ZTree value: 0).! !
@@ -254,10 +254,6 @@ testOn
 	zipper := BinaryTreeZipper on: tree.
 	
 	self assert: zipper focus = tree.! !
-p: 'fbs 4/30/2011 14:13'!
-testOn
-	| tree zipper |
-	tree := self emptyTree.
-	zipper := BinaryTreeZipper on: tree.
+aryTreeZipper on: tree.
 	
 	self assert: zipper focus = tree.! !

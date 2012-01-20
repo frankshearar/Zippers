@@ -1,5 +1,5 @@
 Object subclass: #TreeZipperNode
-	instanceVariableNames: 'leftNodes rightNodes path value changed visitedNodes'
+	instanceVariableNames: 'leftNodes rightNodes path changed visitedNodes'
 	classVariableNames: 'End'
 	poolDictionaries: ''
 	category: 'Zippers'!
@@ -23,6 +23,10 @@ changed
 leftNodes
 	^ leftNodes! !
 
+!TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/20/2011 12:22'!
+parentNode
+	^ visitedNodes last.! !
+
 !TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 16:22'!
 path
 	^ path.! !
@@ -31,19 +35,14 @@ path
 rightNodes
 	^ rightNodes.! !
 
-!TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 12/31/2010 17:06'!
-value
-	^ value.! !
-
 !TreeZipperNode methodsFor: 'accessing' stamp: 'fbs 10/17/2011 18:00'!
 visitedNodes
 	^ visitedNodes! !
 
 
-!TreeZipperNode methodsFor: 'private' stamp: 'fbs 10/17/2011 18:00'!
-path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rightCollection visitedNodes: someObjects changed: aBoolean
+!TreeZipperNode methodsFor: 'private' stamp: 'fbs 12/20/2011 11:45'!
+path: aTreeZipperTrail leftNodes: leftCollection rightNodes: rightCollection visitedNodes: someObjects changed: aBoolean
 	path := aTreeZipperTrail.
-	value := anObject.
 	leftNodes := leftCollection.
 	rightNodes := rightCollection.
 	visitedNodes := someObjects.
@@ -64,11 +63,10 @@ TreeZipperNode class
 end
 	^ End.! !
 
-!TreeZipperNode class methodsFor: 'instance creation' stamp: 'fbs 10/17/2011 17:59'!
-path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rightCollection visitedNodes: someObjects changed: aBoolean
+!TreeZipperNode class methodsFor: 'instance creation' stamp: 'fbs 12/20/2011 11:47'!
+path: aTreeZipperTrail leftNodes: leftCollection rightNodes: rightCollection visitedNodes: someObjects changed: aBoolean
 	^ self new
 		path: aTreeZipperTrail
-		value: anObject
 		leftNodes: leftCollection
 		rightNodes: rightCollection
 		visitedNodes: someObjects
@@ -78,6 +76,10 @@ path: aTreeZipperTrail value: anObject leftNodes: leftCollection rightNodes: rig
 !TreeZipperNode class methodsFor: 'class initialization' stamp: 'fbs 10/18/2011 16:19'!
 initialize
 	End := TreeZipperNodeEndContext new.! !
+
+
+TreeZipperNode initialize!
+eZipperNodeEndContext new.! !
 
 
 TreeZipperNode initialize!

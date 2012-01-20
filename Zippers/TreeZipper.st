@@ -28,17 +28,15 @@ isBranch
 isEmpty
 	^ focus isEmpty.! !
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 22:43'!
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
 newFocusOn: anObject
-	^ ZTree value: anObject children: #().! !
+	^ self newFocusOn: anObject children: #().! !
 
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 10/15/2011 22:44'!
+!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
 newFocusOn: anObject children: aCollection
-	^ ZTree value: anObject children: aCollection.! !
-avigating' stamp: 'fbs 2/16/2011 17:36'!
-rightOrElse: aBlock
-	^ self move: #safeRight orElse: aBlock.! !
-
+	^ (anObject isKindOf: ZTree)
+		ifTrue: [ZTree value: anObject value children: aCollection]
+		ifFalse: [ZTree value: anObject children: aCollection].! !
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 10/23/2011 11:23'!
 root
 	"Return the possibly new/mutated tree under navigation"

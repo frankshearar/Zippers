@@ -399,13 +399,13 @@ testUpReturnsToParentNode2
 	self assert: zipper focus = tree.! !
 
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 10/31/2011 21:56'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:30'!
 testChangeReplacesValue
 	| tree zipper |
 	tree := self triangleTree.
 	zipper := (TreeZipper on: tree) down.
 	
-	zipper := zipper change: [ :i | i + 1].
+	zipper := zipper change: [ :z | ZTree value: (z value + 1)].
 	self assert: zipper focus value = 3 description: 'No change made'.
 	self assert: zipper right focus value = 3 description: 'Position changed'.
 
@@ -413,13 +413,28 @@ testChangeReplacesValue
 		assert: (ZTree value: 1 children: {ZTree value: 3. ZTree value: 3.}) printString
 		equals: zipper root printString.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 11/1/2011 08:02'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:33'!
+testChangeToAtTopReplacesValue
+	| tree zipper |
+	tree := self triangleTree.
+	zipper := TreeZipper on: tree.
+	
+	zipper := zipper changeTo: (ZTree value: 5 children: zipper focus children).
+	self assert: zipper focus value = 5 description: 'No change made'.
+	self assert: zipper safeRight first = #rightAtRootNode.
+
+	self
+		assert: (ZTree value: 5 children: {ZTree value: 2. ZTree value: 3}) printString
+		equals: zipper root printString.
+! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:14'!
 testChangeToReplacesValue
 	| tree zipper |
 	tree := self triangleTree.
 	zipper := (TreeZipper on: tree) down.
 	
-	zipper := zipper changeTo: 5.
+	zipper := zipper changeTo: (ZTree value: 5).
 	self assert: zipper focus value = 5 description: 'No change made'.
 	self assert: zipper right focus value = 3 description: 'Position changed'.
 
@@ -476,6 +491,14 @@ testDeleteOldestSiblingFocusesOnYoungerSibling
 	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
 	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3. ZTree value: 4}) description: 'Wrong thing deleted'.! !
 
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:32'!
+testDeleteOnlyLeafNode
+	| tree zipper |
+	tree := ZTree value: 1 children: {ZTree value: 2}.
+	zipper := tree zipper down delete.
+	
+	self assert: zipper root = (ZTree value: 1).! !
+
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 17:15'!
 testDeleteYoungerSiblingFocusesOnOlderSibling
 	| tree zipper |
@@ -498,62 +521,62 @@ testDeleteYoungestSiblingFocusesOnOlderSibling
 	self assert: zipper focus value = 3 description: 'Zipper focused on wrong sibling'.
 	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/31/2010 23:46'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
 testInsertDownInsertsChild
 	| tree zipper |
 	tree := ZTree value: 0.
 	zipper := tree zipper.
 	
-	zipper := zipper insertDown: 1.
+	zipper := zipper insertDown: (ZTree value: 1).
 	"self should: [zipper up] raise: ZipperNavigation."
 	self assert: zipper focus value = 1 description: 'Zipper not focused on new node'.
 	self shouldnt: [zipper up] raise: ZipperNavigation.
 	
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 10/31/2011 21:56'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 16:17'!
 testInsertDownOnEmptyTreeIsATreeWithOneNode
 	| tree zipper |
 	tree := ZTree empty.
 	zipper := tree zipper.
 	
-	zipper := zipper insertDown: 0.
+	zipper := zipper insertDown: (ZTree value: 0).
 	self assert: zipper focus value = 0 description: 'Zipper not focused on new node'.
 	
 	self assert: zipper root = (ZTree value: 0).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 17:01'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
 testInsertLeftInsertsImmediatelyOlderSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}.
 	zipper := tree zipper.
-	zipper := zipper down right insertLeft: 3.
+	zipper := zipper down right insertLeft: (ZTree value: 3).
 	self assert: zipper focus value = 3 description: 'Zipper not focused on new node'.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 13:20'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 12:43'!
 testInsertLeftInsertsOlderSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
-	zipper := zipper down insertLeft: 2.
+	zipper := zipper down insertLeft: (ZTree value: 2).
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 17:02'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
 testInsertRightInsertsYoungerSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
-	zipper := zipper down insertRight: 2.
+	zipper := zipper down insertRight: (ZTree value: 2).
 	self assert: zipper focus value = 2 description: 'Zipper not focused on new node'.
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 4/30/2011 16:57'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 12:44'!
 testInsertRightOnEmptyTreeInsertsYoungerSibling
 	| tree zipper |
 	tree := ZTree value: 0 children: {ZTree empty}.
 	zipper := tree zipper.
-	zipper := zipper down insertRight: 2.
+	zipper := zipper down insertRight: (ZTree value: 2).
 	self assert: zipper root = (ZTree value: 0 children: {ZTree empty. ZTree value: 2}).! !
 
 
@@ -587,38 +610,7 @@ testZipperShouldShareSubstructures
 	t := self nestedTriangleTree.
 	newTree := (t zipper down changeTo: 5) root.
 	self assert: newTree children second == t children second.! !
-e := self triangleTree.
-	zipper := tree zipper.
-	ran := false.
-	zipper := zipper down upOrElse: [ran := true].
-	
-	self assert: zipper focus = tree.
-	self deny: ran.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/13/2011 19:21'!
-testUpOrElseReturnsToParentNode2
-	| ran tree zipper |
-	tree := ZTree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}.
-	zipper := tree zipper.
-	ran := false.
-	zipper := zipper down down up upOrElse: [ran := true].
-	
-	self assert: zipper focus = tree.
-	self deny: ran.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 15:26'!
-testUpReturnsToParentNode
-	| tree zipper |
-	tree := self triangleTree.
-	zipper := tree zipper.
-	zipper := zipper down up.
-	
-	self assert: zipper focus = tree.! !
-
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 1/1/2011 14:46'!
-testUpReturnsToParentNode2
-	| tree zipper |
-	tree := ZTree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}.
+ree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}.
 	zipper := tree zipper.
 	zipper := zipper down down up up.
 	

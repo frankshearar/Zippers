@@ -7,17 +7,17 @@ Object subclass: #BinarySearchTree
 I implement a binary search tree in a strictly functional manner. I'm pretty naive, in that I do no balancing.!
 
 
-!BinarySearchTree methodsFor: 'adding' stamp: 'fbs 10/19/2011 17:43'!
+!BinarySearchTree methodsFor: 'adding' stamp: 'fbs 12/20/2011 16:40'!
 add: aComparableObject
 	"Add some object that understands < to our tree. aComparableObject < node goes into the left subtree; otherwise, the object goes into the right subtree."
 	^ BinarySearchTree tree: (self add: aComparableObject to: tree zipper) root! !
 
 
-!BinarySearchTree methodsFor: 'private' stamp: 'fbs 10/19/2011 17:43'!
+!BinarySearchTree methodsFor: 'private' stamp: 'fbs 12/20/2011 16:41'!
 add: anObject to: aZipper
 	"Return a zipper with anObject inserted in the correct place: if we're at a leaf node, and <, insertDown; otherwise, move further into the tree."
 	| currentValue leftChild move |
-	aZipper focus isEmpty ifTrue: [ ^ aZipper insertDown: anObject ].
+	aZipper focus isEmpty ifTrue: [ ^ aZipper insertDown: (ZTree value: anObject) ].
 	
 	currentValue := aZipper focus value.
 	
@@ -26,8 +26,8 @@ add: anObject to: aZipper
 	move first = #success ifFalse:
 		["Leaf node. If adding a right subtree, add the empty tree as a left subtree."
 		^ anObject < currentValue
-			ifTrue: [ aZipper insertDown: anObject ]
-			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: anObject ] ].
+			ifTrue: [ aZipper insertDown: (ZTree value: anObject) ]
+			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: (ZTree value: anObject) ] ].
 
 	leftChild := move second.
 	
@@ -97,4 +97,3 @@ tree: aBinaryTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 4/30/2011 17:08'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-^ self new tree: (ZTree value: anObject).! !
