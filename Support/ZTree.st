@@ -1,39 +1,33 @@
 Object subclass: #ZTree
 	instanceVariableNames: 'children value'
-	classVariableNames: 'Empty'
+	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
 !ZTree commentStamp: 'fbs 12/30/2010 23:32' prior: 0!
 I'm a basic implementation of a tree, only present so that my package doesn't need to rely on a separate tree package.!
 
 
-!ZTree methodsFor: 'comparing' stamp: 'fbs 4/27/2011 17:49'!
+!ZTree methodsFor: 'as yet unclassified' stamp: 'fbs 12/31/2010 00:08'!
 = anObject
 	^ anObject class == self class and:
 		[self value = anObject value and:
-			[self childrenEqual: anObject children]].! !
+			[self children = anObject children]].! !
 
 
-!ZTree methodsFor: 'printing' stamp: 'fbs 4/24/2011 12:33'!
-asDotFile
-	| join |
-	join := [:c | c
-			ifEmpty: ['']
-			ifNotEmpty: [ c reduce: [:s :e | s, ';', Character cr, e ]]].
+!ZTree methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:33'!
+children
+	^ children! !
 
-	^ 'digraph {', Character cr,
-		self printChildRecords, Character cr,
-		(join value: (self associations collect: #printString)), Character cr,
-		'}'! !
+!ZTree methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:40'!
+value
+	^ value.! !
 
-!ZTree methodsFor: 'printing' stamp: 'fbs 4/24/2011 20:56'!
-asDotNode
-	| labels labelString |
-	labels := OrderedCollection new.
-	(1 to: self children size do: [:i | labels addLast: '<p', i printString, '>']).
-	labelString := labels ifEmpty: ['']
-		ifNotEmpty: ['[label = "', (labels reduce: [:acc :each | acc , ' | ']), '"]'].
-	^ '"node', self value printString, labelString, ';'! !
+
+!ZTree methodsFor: 'initialize-release' stamp: 'fbs 12/30/2010 23:34'!
+initialize
+	super initialize.
+	children := OrderedCollection new.! !
+
 
 !ZTree methodsFor: 'printing' stamp: 'fbs 12/30/2010 23:54'!
 printString
@@ -44,13 +38,24 @@ printString
 		')'.! !
 
 
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 21:21'!
-asMutableTree
-	"Return a mutable copy of this tree."
-	| mutableCopy |
-	self isEmpty ifTrue: [^ZTree empty].
+!ZTree methodsFor: 'private' stamp: 'fbs 12/30/2010 23:41'!
+value: anObject children: aCollection
+	value := anObject.
+	children := aCollection asOrderedCollection.! !
 
-	mutableCopy := MutableZTree new.
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+ZTree class
+	instanceVariableNames: ''!
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:40'!
+value: anObject
+	^ self new value: anObject children: OrderedCollection new.! !
+
+!ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
+value: anObject children: aCollection
+	^ self new value: anObject children: aCollection.! !
+ableZTree new.
 	mutableCopy value: self value.
 	mutableCopy children addAll: (self children collect: #asMutableTree).
 	^ mutableCopy.! !

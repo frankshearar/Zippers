@@ -25,6 +25,10 @@ change: aBlock
 focus
 	^ focus.! !
 
+!ListZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 23:24'!
+trail
+	^ trail.! !
+
 
 !ListZipper methodsFor: 'private' stamp: 'fbs 12/28/2010 16:36'!
 focus: aSeqColl trail: anotherSeqColl
@@ -32,17 +36,17 @@ focus: aSeqColl trail: anotherSeqColl
 	trail := anotherSeqColl.! !
 
 
-!ListZipper methodsFor: 'navigating' stamp: 'fbs 12/28/2010 19:45'!
+!ListZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:22'!
 left
-	trail isEmpty ifTrue: [^ ZipperNavigation new signal].
+	trail isEmpty ifTrue: [^ ZipperNavigation new signal: 'Left at the first element'].
 	
 	^ ListZipper new
 		focus: (focus copy addFirst: trail first; yourself)
 		trail: trail allButFirst.! !
 
-!ListZipper methodsFor: 'navigating' stamp: 'fbs 12/28/2010 19:45'!
+!ListZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:22'!
 right
-	focus isEmpty ifTrue: [^ ZipperNavigation new signal].
+	focus isEmpty ifTrue: [^ ZipperNavigation new signal: 'Right at the last element'].
 	
 	^ ListZipper new
 		focus: focus allButFirst
@@ -56,4 +60,3 @@ ListZipper class
 !ListZipper class methodsFor: 'instance creation' stamp: 'fbs 12/28/2010 16:48'!
 on: aSequenceableCollection
 	^ self new focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
-tion asOrderedCollection trail: OrderedCollection new.! !

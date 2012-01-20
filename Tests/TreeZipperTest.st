@@ -13,22 +13,20 @@ testOn
 	self assert: zipper focus = tree.! !
 
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 22:12'!
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 23:39'!
 emptyTree
-	^ Object new.! !
+	^ ZTree value: 0.! !
 
-!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 22:20'!
+!TreeZipperTest methodsFor: 'fixtures' stamp: 'fbs 12/30/2010 23:39'!
 triangleTree
 	" Best viewed in a monospaced font:
 	   A
 	  / \
 	 B   C "
-	| a b c |
-	a := Object new.
-	b := Object new.
-	c := Object new.
-	a addDependent: b.
-	a addDependent: c.! !
+	| b c |
+	b := ZTree value: 2.
+	c := ZTree value: 3.
+	^ ZTree value: 1 children: {b. c.}! !
 
 
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:18'!
@@ -40,14 +38,24 @@ testDownOnEmptyTreeSignalsException
 		should: [zipper down]
 		raise: ZipperNavigation.! !
 
-!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:23'!
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:59'!
 testDownOnLeafNodeSignalsException
 	| zipper |
 	zipper := TreeZipper on: self triangleTree.
 	zipper := zipper down.
+
 	self
 		should: [zipper down]
 		raise: ZipperNavigation.! !
+
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 23:44'!
+testDownOnNonEmptyTreeFocusesOnFirstSibling
+	| tree zipper |
+	tree := self triangleTree.
+	zipper := TreeZipper on: tree.
+	zipper := zipper down.
+	
+	self assert: zipper focus = tree children first.! !
 
 !TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 22:21'!
 testUpAtRootNodeSignalsException
@@ -57,21 +65,17 @@ testUpAtRootNodeSignalsException
 	self
 		should: [zipper up]
 		raise: ZipperNavigation.! !
-escription: 'No change made'.
-	self assert: zipper right focus value = 3 description: 'Position changed'.
 
-	self
-		assert: (ZTree value: 1 children: {ZTree value: 3. ZTree value: 3.}) printString
-		equals: zipper root printString.! !
-
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:33'!
-testChangeToAtTopReplacesValue
+!TreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 12/30/2010 23:08'!
+testUpReturnsToParentNode
 	| tree zipper |
 	tree := self triangleTree.
 	zipper := TreeZipper on: tree.
+	zipper := zipper down.
+	zipper := zipper up.
 	
-	zipper := zipper changeTo: (ZTree value: 5 children: zipper focus children).
-	self assert: zipper focus value = 5 description: 'No change made'.
+	self assert: zipper focus = tree.! !
+ription: 'No change made'.
 	self assert: zipper safeRight first = #rightAtRootNode.
 
 	self

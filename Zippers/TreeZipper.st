@@ -1,5 +1,5 @@
 Object subclass: #TreeZipper
-	instanceVariableNames: 'focus trail'
+	instanceVariableNames: 'focus trail leftNodes rightNodes'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
@@ -11,10 +11,18 @@ In particular, Smalltalk has a built-in tree structure, that of dependents: any 
 That is, I allow one to navigate arbitrarily over a tree structure, and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 22:42'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:49'!
 down
-	(self dependents isEmpty)
-		ifTrue: [ ^ ZipperNavigation signal: 'Down at a leaf node' ].! !
+	"Return a Zipper focusing on the first child element of this node."
+	(self focus children isEmpty)
+		ifTrue: [ ^ ZipperNavigation signal: 'Down at a leaf node' ].
+	^ TreeZipper new
+		focus: self focus children first
+		trail: (trail
+			addFirst: (TreeZipperTrail
+				value: focus value
+				zipper: (ListZipper on: focus children));
+			yourself).! !
 
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:40'!
 left! !
@@ -22,9 +30,18 @@ left! !
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 21:41'!
 right! !
 
-!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 22:21'!
+!TreeZipper methodsFor: 'navigating' stamp: 'fbs 12/30/2010 23:58'!
 up
-	^ ZipperNavigation signal: 'Up at the root node'.! !
+	| parent |
+	trail isEmpty ifTrue: [^ ZipperNavigation signal: 'Up at the root node'].
+	
+	"Parent is the last TreeZipperTrail we used - a zipper on our father and uncles."
+	parent := trail first.
+	^ TreeZipper new
+		focus: (ZTree
+			value: parent value
+			children: parent zipper focus, parent zipper trail reverse)
+		trail: trail allButFirst.! !
 
 
 !TreeZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 22:06'!
