@@ -45,14 +45,14 @@ tree: aTree
 	tree := aTree.! !
 
 
-!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 2/24/2011 17:32'!
+!BinarySearchTree methodsFor: 'converting' stamp: 'fbs 2/28/2011 17:32'!
 asOrderedCollection
-	^ self collect: [:each | each ].! !
+	^ (self collect: [:each | each ]) asOrderedCollection.! !
 
 
-!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/26/2011 22:53'!
+!BinarySearchTree methodsFor: 'enumerating' stamp: 'fbs 2/28/2011 17:43'!
 collect: aBlock
-	^ InOrderTraversal new collect: aBlock using: tree zipper.! !
+	^ InOrderTraversal new traverse: tree collecting: aBlock.! !
 
 
 !BinarySearchTree methodsFor: 'initialize-release' stamp: 'fbs 2/24/2011 17:33'!
@@ -76,8 +76,7 @@ tree: aTree
 !BinarySearchTree class methodsFor: 'instance creation' stamp: 'fbs 2/23/2011 21:04'!
 with: anObject
 	^ self new tree: (ZTree value: anObject).! !
-
-e methodsFor: 'enumerating' stamp: 'fbs 4/30/2011 22:30'!
+rating' stamp: 'fbs 4/30/2011 22:30'!
 collect: aBlock
 	^ tree collect: aBlock.! !
 

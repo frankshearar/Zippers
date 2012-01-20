@@ -9,21 +9,21 @@ makeTraversal
 	^ PostOrderTraversal new.! !
 
 
-!PostOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/21/2011 18:02'!
+!PostOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/28/2011 17:47'!
 testCollectCollectsCorrectly
 	| i tree |
 	tree := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.
-	i := self makeTraversal collect: [:each | each * 2] using: tree zipper.
+	i := self makeTraversal traverse: tree collecting: [:each | each * 2].
 	
-	self assert: i = (#(3 4 2 5 1) * 2) asOrderedCollection.! !
+	self assert: i asOrderedCollection = (#(3 4 2 5 1) * 2) asOrderedCollection.! !
 
-!PostOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/21/2011 18:01'!
+!PostOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/28/2011 17:47'!
 testCollectEnumeratesCorrectly
 	| i tree |
 	tree := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.
-	i := self makeTraversal collect: [:each | each] using: tree zipper.
+	i := self makeTraversal traverse: tree collecting: [:each | each].
 	
-	self assert: i = #(3 4 2 5 1) asOrderedCollection.! !
+	self assert: i asOrderedCollection = #(3 4 2 5 1) asOrderedCollection.! !
 
 !PostOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/18/2011 07:26'!
 testTreeTraversalMovesDepthFirst
@@ -36,9 +36,7 @@ testTreeTraversalMovesDepthFirstOnTriangleTree
 	self
 		assertTraversalOf: (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3})
 		 yieldsOrder: #(2 3 1).! !
-EmptySubtrees
-	| i tree |
-	tree := ZTree value: 1 children: {ZTree empty. ZTree value: 2}.
+ee value: 1 children: {ZTree empty. ZTree value: 2}.
 	i := self makeTraversal traverseNodes: tree collecting: #value.
 	
 	self assert: i asOrderedCollection = #(2 1) asOrderedCollection.! !

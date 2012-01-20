@@ -4,13 +4,13 @@ TraversalTestCase subclass: #PreOrderTraversalTest
 	poolDictionaries: ''
 	category: 'Zippers-Tests'!
 
-!PreOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/25/2011 17:41'!
+!PreOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/28/2011 17:47'!
 testCollectCollectsCorrectly
 	| i tree |
 	tree := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.
-	i := self makeTraversal collect: [:each | each * 2] using: tree zipper.
+	i := self makeTraversal traverse: tree collecting: [:each | each * 2].
 	
-	self assert: i = (#(1 2 3 4 5) * 2) asOrderedCollection.! !
+	self assert: i asOrderedCollection = (#(1 2 3 4 5) * 2) asOrderedCollection.! !
 
 !PreOrderTraversalTest methodsFor: 'testing - enumerating' stamp: 'fbs 2/17/2011 22:11'!
 testTreeTraversalMovesDepthFirst
@@ -22,7 +22,7 @@ testTreeTraversalMovesDepthFirst
 !PreOrderTraversalTest methodsFor: 'running' stamp: 'fbs 2/17/2011 22:04'!
 makeTraversal
 	^ PreOrderTraversal new.! !
- methodsFor: 'testing - enumerating' stamp: 'fbs 2/17/2011 07:51'!
+ng - enumerating' stamp: 'fbs 2/17/2011 07:51'!
 testTreeTraversalMovesDepthFirst
 	| i tree |
 	tree := ZTree value: 1 children: {ZTree value: 2 children: {ZTree value: 3. ZTree value: 4}. ZTree value: 5}.

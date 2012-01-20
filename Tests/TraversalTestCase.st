@@ -30,10 +30,10 @@ testEmptyTraversalDoesNothing
 	
 	self assert: i = 1.! !
 
-!TraversalTestCase methodsFor: 'testing - enumerating' stamp: 'fbs 2/25/2011 16:45'!
+!TraversalTestCase methodsFor: 'testing - enumerating' stamp: 'fbs 2/28/2011 17:45'!
 testEnumeratingEmptyTreeReturnsEmptyCollection
 	| items |
-	items := self makeTraversal collect: [:each | each ] using: ZTree empty zipper.
+	items := self makeTraversal traverse: ZTree empty collecting: [:each | each ].
 	self assert: items isEmpty.! !
 
 !TraversalTestCase methodsFor: 'testing - enumerating' stamp: 'fbs 2/17/2011 22:05'!
@@ -60,3 +60,4 @@ TraversalTestCase class
 !TraversalTestCase class methodsFor: 'testing' stamp: 'fbs 2/26/2011 22:55'!
 isAbstract
 	^ self name = #TraversalTestCase.! !
+
