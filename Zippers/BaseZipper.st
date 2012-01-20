@@ -9,55 +9,90 @@ I am a zipper for navigating over a variable-arity tree, that is a tree that may
 That is, I allow one to navigate arbitrarily over a tree structure (a ZTree), and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
 
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 2/9/2011 09:15'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:23'!
 change: aBlock
 	"aBlock is a unary block whose evaluated value we use to replace the current focus."
-	^ self changeTo: (aBlock value: focus value).! !
+	^ self mutate: (aBlock value: focus value) with: #safeChangeTo:.! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:38'!
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:23'!
 changeTo: newValue
-	^ self class new
+	^ self mutate: newValue with: #safeChangeTo:.! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:36'!
+delete
+	^ self move: #safeDelete.! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:15'!
+insertDown: anObject
+	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tree: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
+
+	^ self mutate: anObject with: #safeInsertDown:.! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:15'!
+insertLeft: anObject
+	^ self mutate: anObject with: #safeInsertLeft:.! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:16'!
+insertRight: anObject
+	^ self mutate: anObject with: #safeInsertRight:.! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:25'!
+safeChange: aBlock
+	^ self safeChangeTo: (aBlock value: focus value).! !
+
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:18'!
+safeChangeTo: newValue
+	| zipper |
+	zipper := self class new
 		focus: newValue
 		trail: (trail class "This could be a normal context or the end context."
 			path: trail path
 			leftNodes: trail leftNodes
 			rightNodes: trail rightNodes
 			parentNodes: trail parentNodes
-			changed: true).! !
+			changed: true).
+	^ {#success. zipper.}! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:38'!
-delete
-	trail isEnd ifTrue: [^ ZipperNavigation signal: 'Delete at top'].
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:35'!
+safeDelete
+	| success |
+	success := trail isEnd
+		ifTrue: [#deleteAtRoot]
+		ifFalse: [#success].
+
+	(success = #success)
+		ifFalse: [^ {success. self.}].
 	
 	(trail leftNodes isEmpty and: [trail rightNodes isEmpty]) ifTrue:
-		[^ self class new
+		[^ {success. self class new
 			focus: (self newFocusOn: trail parentNode)
-			trail: trail path].
+			trail: trail path}].
 			
 	trail leftNodes isEmpty ifTrue:
-		[^ self class new
+		[^ {success. self class new
 			focus: trail rightNodes first
 			trail: (TreeZipperNode
 				path: trail path
 				leftNodes: trail leftNodes
 				rightNodes: trail rightNodes allButFirst
 				parentNodes: trail parentNodes
-				changed: true)].
-			
-	^ self class new
+				changed: true)}].
+	
+	^ {success. self class new
 		focus: trail leftNodes first
 		trail: (TreeZipperNode
 			path: trail path
 			leftNodes: trail leftNodes allButFirst
 			rightNodes: trail rightNodes
 			parentNodes: trail parentNodes
-			changed: true).! !
+			changed: true).}! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:38'!
-insertDown: anObject
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:09'!
+safeInsertDown: anObject
 	"Insert anObject as a child node of the current focus. Sometimes you need a 'spacer' in your tree: a binary tree needs one so that the node can have just a right subtree. In that event, we insert a ZTree empty."
 
-	^ focus isEmpty
+	| zipper |
+	zipper := focus isEmpty
 		ifTrue: [self changeTo: anObject ]
 		ifFalse: [ self class new
 			focus: (anObject = ZTree empty
@@ -68,31 +103,48 @@ insertDown: anObject
 				leftNodes: {}
 				rightNodes: focus children
 				parentNodes: trail parentNodes, {focus}
-				changed: true) ]! !
+				changed: true) ].
+	^ {#success. zipper.}.! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:38'!
-insertLeft: anObject
-	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
-	^ self class new
-		focus: (self newFocusOn: anObject)
-		trail: (TreeZipperNode
-			path: trail path
-			leftNodes: trail leftNodes
-			rightNodes: ({focus} , trail rightNodes)
-			parentNodes: trail parentNodes
-			changed: true)! !
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:57'!
+safeInsertLeft: anObject
+	| success zipper |
+	success := trail isEnd
+		ifTrue: [#insertLeftAtRoot]
+		ifFalse: [#success].
+		
+	zipper := (success = #success)
+		ifTrue: [
+			self class new
+				focus: (self newFocusOn: anObject)
+				trail: (TreeZipperNode
+					path: trail path
+					leftNodes: trail leftNodes
+					rightNodes: ({focus} , trail rightNodes)
+					parentNodes: trail parentNodes
+					changed: true)]
+		ifFalse: [self].
+	^ {success. zipper.}! !
 
-!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:39'!
-insertRight: anObject
-	trail ifNil: [^ ZipperNavigation signal: 'Insert at top'].
-	^ self class new
-		focus: (self newFocusOn: anObject)
-		trail: (TreeZipperNode
-			path: trail path
-			leftNodes: (trail leftNodes , {focus})
-			rightNodes: trail rightNodes
-			parentNodes: trail parentNodes
-			changed: true)! !
+!BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 20:50'!
+safeInsertRight: anObject
+	| success zipper |
+	success := trail isEnd
+		ifTrue: [#insertRightAtRoot]
+		ifFalse: [#success].
+		
+	zipper := (success = #success)
+		ifTrue: [
+			self class new
+			focus: (self newFocusOn: anObject)
+			trail: (TreeZipperNode
+				path: trail path
+				leftNodes: (trail leftNodes , {focus})
+				rightNodes: trail rightNodes
+				parentNodes: trail parentNodes
+				changed: true)]
+		ifFalse: [self].
+	^ {success. zipper.}! !
 
 
 !BaseZipper methodsFor: 'private navigating' stamp: 'fbs 10/23/2011 11:23'!
@@ -307,6 +359,15 @@ move: directionSelector orElse: aBlock
 		ifTrue: [ move second ]
 		ifFalse: [ aBlock cull: self focus ].! !
 
+!BaseZipper methodsFor: 'private' stamp: 'fbs 12/20/2011 21:14'!
+mutate: anObject with: actionSelector
+	| attempt |
+	attempt := self perform: actionSelector with: anObject.
+	(attempt first = #success)
+		ifTrue: [ ^ attempt second].
+		
+	ZipperNavigation signal: attempt first.! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 BaseZipper class
@@ -315,68 +376,7 @@ BaseZipper class
 !BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 10/18/2011 16:22'!
 on: aTree
 	^ self new focus: aTree trail: TreeZipperNode end.! !
-ZipperNode end.! !
--- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-BaseZipper class
-	instanceVariableNames: ''!
-
-!BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 10/18/2011 16:22'!
-on: aTree
-	^ self new focus: aTree trail: TreeZipperNode end.! !
-Tree trail: TreeZipperNode end.! !
-Nodes: trail rightNodes allButFirst
-				parentNodes: trail parentNodes
-				changed: false) ]
-		ifFalse: [ self ].
-		
-	^ {success. zipper.}! !
-
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 12/22/2011 14:01'!
-safeRightmost
-	"Return a pair (successfully moved, zipper on new location)."
-	| success zipper |
-	trail isEnd
-		ifTrue: [ success := #rightAtRootNode ]
-		ifFalse: [ trail rightNodes ifEmpty: [ success := #rightAtRightmostSibling ]].
-	success ifNil: [ success := #success ].
-	
-	zipper := (success = #success)
-		ifTrue: [ self class new
-			focus: trail rightNodes last
-			trail: (TreeZipperNode
-				path: trail path
-				leftNodes: (trail leftNodes, {focus}, trail rightNodes allButLast)
-				rightNodes: #()
-				parentNodes: trail parentNodes
-				changed: false) ]
-		ifFalse: [ self ].
-		
-	^ {success. zipper.}! !
-
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 12/20/2011 20:39'!
-safeUp
-	"When no part of (this local part of) the structure has changed, return a pair (successfully moved, zipper on identical location)."
-	| success zipper |
-	success := trail isEnd
-		ifTrue: [ #upAtRootNode ]
-		ifFalse: [ #success ].
-	
-	zipper := (success = #success)
-		ifTrue: [ self class new
-					focus: trail parentNodes last
-					trail: trail path ]
-		ifFalse: [ self ].
-		
-	^ {success. zipper.}! !
-
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:34'!
-up
-	^ self move: #safeUp.! !
-
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 2/16/2011 17:35'!
-upOrElse: aBlock
-	^ self move: #safeUp orElse: aBlock.! !
+ orElse: aBlock.! !
 
 
 !BaseZipper methodsFor: 'accessing' stamp: 'fbs 12/30/2010 22:06'!

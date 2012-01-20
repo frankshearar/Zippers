@@ -446,14 +446,6 @@ testChangeToReplacesValue
 testDeleteAtTopFails
 	self should: [self emptyTree zipper delete] raise: ZipperNavigation.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:06'!
-testDeleteLeafNode
-	| tree zipper |
-	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
-	zipper := tree zipper down delete.
-	
-	self assert: zipper root = (ZTree value: 1 children: {ZTree value: 3}).! !
-
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 1/1/2011 16:07'!
 testDeleteLeafNodeDeletesNode
 	| tree zipper |
@@ -562,6 +554,13 @@ testInsertLeftInsertsOlderSibling
 	zipper := zipper down insertLeft: (ZTree value: 2).
 	self assert: zipper root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
 
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:54'!
+testInsertLeftOnRootIndicatesFailure
+	| tree zipper |
+	tree := ZTree value: 0.
+	zipper := tree zipper.
+	self should: [zipper insertLeft: (ZTree value: 1)] raise: ZipperNavigation! !
+
 !TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:31'!
 testInsertRightInsertsYoungerSibling
 	| tree zipper |
@@ -578,6 +577,13 @@ testInsertRightOnEmptyTreeInsertsYoungerSibling
 	zipper := tree zipper.
 	zipper := zipper down insertRight: (ZTree value: 2).
 	self assert: zipper root = (ZTree value: 0 children: {ZTree empty. ZTree value: 2}).! !
+
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:50'!
+testInsertRightOnRootIndicatesFailure
+	| tree zipper |
+	tree := ZTree value: 0.
+	zipper := tree zipper.
+	self should: [zipper insertRight: (ZTree value: 1)] raise: ZipperNavigation! !
 
 
 !TreeZipperTest methodsFor: 'testing - copying' stamp: 'fbs 2/25/2011 08:06'!
@@ -610,33 +616,6 @@ testZipperShouldShareSubstructures
 	t := self nestedTriangleTree.
 	newTree := (t zipper down changeTo: 5) root.
 	self assert: newTree children second == t children second.! !
-ree value: 0 children: {ZTree value: 1 children: {ZTree value: 2}}.
-	zipper := tree zipper.
-	zipper := zipper down down up up.
-	
-	self assert: zipper focus = tree.! !
-
-
-!TreeZipperTest methodsFor: 'testing - testing' stamp: 'fbs 2/17/2011 07:38'!
-testIsEmptyOnEmptyTreeReturnsTrue
-	self assert: self emptyTree zipper isEmpty.! !
-
-!TreeZipperTest methodsFor: 'testing - testing' stamp: 'fbs 2/17/2011 07:42'!
-testIsEmptyOnNonEmptyTreeAlwaysReturnsFalse
-	| zipper |
-	zipper := self triangleTree zipper.
-	self deny: zipper isEmpty.
-	
-	self deny: zipper down isEmpty.! !
-
-
-!TreeZipperTest methodsFor: 'testing - instance creation' stamp: 'fbs 12/30/2010 22:19'!
-testOn
-	| tree zipper |
-	tree := self emptyTree.
-	zipper := TreeZipper on: tree.
-	
-	self assert: zipper focus = tree.! !
 
 
 !TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:24'!
@@ -816,6 +795,18 @@ testSafeInsertRightInsertsYoungerSibling
 	zipper := tree zipper.
 	attempt := zipper down safeInsertRight: (ZTree value: 2).
 	self assert: #success equals: attempt first.
+	self assert: attempt second focus value = 2 description: 'Zipper not focused on new node'.
+	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
+
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 20:49'!
+testSafeInsertRightOnRootIndicatesFailure
+	| attempt tree zipper |
+	tree := ZTree value: 0.
+	zipper := tree zipper.
+	attempt := zipper safeInsertRight: (ZTree value: 2).
+	self assert: #insertRightAtRoot equals: attempt first.
+	self assert: attempt second = zipper.! !
+.
 	self assert: attempt second focus value = 2 description: 'Zipper not focused on new node'.
 	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
 
