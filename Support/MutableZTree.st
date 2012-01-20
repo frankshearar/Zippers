@@ -1,5 +1,5 @@
-Object subclass: #MutableZTree
-	instanceVariableNames: 'children value'
+ZTree subclass: #MutableZTree
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
@@ -7,12 +7,16 @@ Object subclass: #MutableZTree
 I implement a mutable version of ZTree. My sole reason for being is to provide a boundary within which mutable stuff can happen... like rebalancing a tree using the Day/Stout/Warren algorithm.!
 
 
-!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/27/2011 17:30'!
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 12:48'!
 asImmutableTree
-	"Return an immutable version of self."
-	self children isEmpty ifTrue: [^ ZTree value: self value].
+	^ self asImmutableTreeOfType: ZTree.! !
 
-	^ ZTree
+!MutableZTree methodsFor: 'converting' stamp: 'fbs 4/28/2011 12:48'!
+asImmutableTreeOfType: aClass
+	"Return an immutable version of self."
+	self children isEmpty ifTrue: [^ aClass value: self value].
+
+	^ aClass
 		value: self value
 		children: (self children
 			collect: [:each | each
@@ -122,7 +126,4 @@ initialize
 !MutableZTree methodsFor: 'printing' stamp: 'fbs 4/27/2011 07:41'!
 printString
 	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
- ' ', (self left printString), ' ', (self right printString), ')'! !
-7:41'!
-printString
-	^ '(', self value, ' ', (self left printString), ' ', (self right printString), ')'! !
+tString), ' ', (self right printString), ')'! !

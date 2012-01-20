@@ -114,11 +114,6 @@ asMutableTree
 	mutableCopy children addAll: (self children collect: #asMutableTree).
 	^ mutableCopy.! !
 
-!ZTree methodsFor: 'converting' stamp: 'fbs 4/26/2011 22:15'!
-balance
-	"Return a balanced version of self."
-	^ self asMutableTree balance asImmutableTree.! !
-
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
 ZTree class
@@ -137,6 +132,9 @@ value: anObject
 			children: OrderedCollection new ]! !
 
 !ZTree class methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
+value: anObject children: aCollection
+	^ self new value: anObject children: aCollection.! !
+ass methodsFor: 'instance creation' stamp: 'fbs 12/30/2010 23:41'!
 value: anObject children: aCollection
 	^ self new value: anObject children: aCollection.! !
 !
