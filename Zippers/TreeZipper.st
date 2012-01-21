@@ -29,12 +29,11 @@ isEmpty
 	^ focus isEmpty.! !
 
 !TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
-newFocusOn: anObject
-	^ self newFocusOn: anObject children: #().! !
-
-!TreeZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 12/20/2011 16:13'!
 newFocusOn: anObject children: aCollection
 	^ (anObject isKindOf: ZTree)
+		ifTrue: [ZTree value: anObject value children: aCollection]
+		ifFalse: [ZTree value: anObject children: aCollection].! !
+Object isKindOf: ZTree)
 		ifTrue: [ZTree value: anObject value children: aCollection]
 		ifFalse: [ZTree value: anObject children: aCollection].! !
 !TreeZipper methodsFor: 'navigating' stamp: 'fbs 10/23/2011 11:23'!

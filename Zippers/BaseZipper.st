@@ -3,10 +3,15 @@ Object subclass: #BaseZipper
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers'!
-!BaseZipper commentStamp: 'fbs 1/1/2011 18:01' prior: 0!
-I am a zipper for navigating over a variable-arity tree, that is a tree that may have any number of children per node.
+!BaseZipper commentStamp: 'fbs 1/21/2012 09:49' prior: 0!
+I am a zipper for navigating over an hierarchical structure.
 
-That is, I allow one to navigate arbitrarily over a tree structure (a ZTree), and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".!
+That is, I allow one to navigate arbitrarily over a tree structure, and change parts of it, where "change" means "return a structure that shares part of the original structure, but otherwise leaves the host structure unchanged".
+
+ My subclasses define the three structure-specific pieces I need, namely,
+* can this node have children? (#branch)
+* what are this node's children? (#children)
+* how can I construct a new node, given a parent and some children nodes? (#newFocusOn:children)!
 
 
 !BaseZipper methodsFor: 'mutating' stamp: 'fbs 12/20/2011 21:23'!
@@ -183,14 +188,6 @@ children
 
 !BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 21:00'!
 isBranch
-	self subclassResponsibility.! !
-
-!BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:56'!
-isEmpty
-	self subclassResponsibility.! !
-
-!BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:57'!
-newFocusOn: anObject
 	self subclassResponsibility.! !
 
 !BaseZipper methodsFor: 'pluggable behaviours' stamp: 'fbs 11/12/2011 20:57'!
@@ -418,6 +415,10 @@ mutate: anObject with: actionSelector
 		ifTrue: [ ^ attempt second].
 		
 	ZipperNavigation signal: attempt first.! !
+
+!BaseZipper methodsFor: 'private' stamp: 'fbs 1/21/2012 09:49'!
+newFocusOn: anObject
+	^ self newFocusOn: anObject children: #().! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
