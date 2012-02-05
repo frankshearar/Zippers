@@ -12,25 +12,28 @@ depthFirstTraversal: aZipper doing: aBlock
 	^ (self collect: [:each | each] using: aZipper) do: aBlock.! !
 
 
-!InOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 4/24/2011 22:04'!
+!InOrderTraversal methodsFor: 'enumerating' stamp: 'fbs 2/5/2012 22:23'!
 collectNodes: aBlock using: aZipper
 	"A naive depth-first traversal. It fails in the presence of cycles."
-	| collected left move right |
-	aZipper focus isEmpty
-		ifTrue: [ collected := #() asOrderedCollection ]
-		ifFalse: [ collected := OrderedCollection with: (aBlock value: aZipper focus) ].
+	| collected left right |
+	right := #() asOrderedCollection.
+	left := #() asOrderedCollection.
+	collected := aZipper focus isEmpty
+		ifTrue: [#() asOrderedCollection]
+		ifFalse: [OrderedCollection with: (aBlock value: aZipper focus)].
 		
-	move := aZipper safeDown.
-	
-	left := (move first = #success)
-		ifTrue: [ self collectNodes: aBlock using: move second ]
-		ifFalse: [ #() asOrderedCollection ].
-	
-	right := ((move first = #success) and: [(move := move second safeRight) first = #success])
-		ifTrue: [self collectNodes: aBlock using: move second]
-		ifFalse: [ #() asOrderedCollection ].
+	aZipper safeDown
+		either: [:leftChild |
+			left := self collectNodes: aBlock using: leftChild.
+			leftChild safeRight
+				either: [:rightChild |
+					right := self collectNodes: aBlock using: rightChild]
+				or: [:unusedError | "do nothing"]]
+		or: [:unusedError | "do nothing"].
 
 	^ left copy
 		addAll: collected;
 		addAll: right;
+		yourself.! !
+: right;
 		yourself.! !

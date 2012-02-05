@@ -69,85 +69,89 @@ testRightWithNoLeftSubtreeMovesToRightSubtree
 	
 	self assert: zipper focus value = 1 description: 'We followed the wrong path'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:56'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:34'!
 testSafeLeftWithEmptyLeftSubtreeFails
 	| move tree zipper |
 	tree := ZTree value: 0 children: {ZTree empty}.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeLeft.
-	self assert: move first == #noLeftSubtree.
-	self assert: move second focus value = 0 description: 'Focus moved'.! !
+	self deny: move isRight.
+	self assert: #noLeftSubtree equals: move value error.
+	self assert: move value location focus value = 0 description: 'Focus moved'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:56'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:34'!
 testSafeLeftWithNoLeftSubtreeFails
 	| move tree zipper |
 	tree := ZTree value: 0.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeLeft.
-	self assert: move first == #noLeftSubtree.
-	self assert: move second focus value = 0 description: 'Focus moved'.! !
+	self assert: #noLeftSubtree equals: move value error.
+	self assert: move value location focus value = 0 description: 'Focus moved'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:50'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:31'!
 testSafeRightWithEmptyRightSubtreeFails
 	| move tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1. ZTree empty}.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeRight.
-	self assert: move first == #noRightSubtree.
-	self assert: move second focus value = 0 description: 'Focus moved'.! !
+	self assert: #noRightSubtree equals: move value error.
+	self assert: move value location focus value = 0 description: 'Focus moved'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:38'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:30'!
 testSafeRightWithNoLeftSubtreeMovesToRightSubtree
 	| move tree zipper |
 	tree := ZTree value: 0 children: {ZTree empty. ZTree value: 1}.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeRight.
-	self assert: move first == #success.
-	self assert: move second focus value = 1 description: 'We followed the wrong path'.! !
+	self assert: move isRight.
+	self assert: move value focus value = 1 description: 'We followed the wrong path'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:49'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:30'!
 testSafeRightWithNoRightSubtreeFails
 	| move tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeRight.
-	self assert: move first == #noRightSubtree.
-	self assert: move second focus value = 0 description: 'Focus moved'.! !
+	self deny: move isRight.
+	self assert: #noRightSubtree equals: move value error.
+	self assert: move value location focus value = 0 description: 'Focus moved'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 15:50'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:29'!
 testSafeRightWithNoSubtreesFails
 	| move tree zipper |
 	tree := ZTree value: 0.
 	zipper := BinaryTreeZipper on: tree.
 	move := zipper safeRight.
-	self assert: move first == #rightAtLeafNode.
-	self assert: move second focus value = 0 description: 'Focus moved'.! !
+	self deny: move isRight.
+	self assert: #rightAtLeafNode equals: move value error.
+	self assert: move value location focus value = 0 description: 'Focus moved'.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 16:04'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:24'!
 testSafeUpOnLeftSubtreeMovesToParent
 	| move zipper |
 	zipper := BinaryTreeZipper on: self triangleTree.
 	move := zipper left safeUp.
 	
-	self assert: move first == #success.
-	self assert: move second focus value = 1.! !
+	self assert: move isRight.
+	self assert: move value focus value = 1.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 16:04'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:24'!
 testSafeUpOnRightSubtreeMovesToParent
 	| move zipper |
 	zipper := BinaryTreeZipper on: self triangleTree.
 	move := zipper right safeUp.
 	
-	self assert: move first == #success.
-	self assert: move second focus value = 1.! !
+	self assert: move isRight.
+	self assert: move value focus value = 1.! !
 
-!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 16:05'!
+!BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 2/5/2012 22:23'!
 testSafeUpOnRootNodeFails
 	| move zipper |
 	zipper := BinaryTreeZipper on: (ZTree value: 0).
 	move := zipper safeUp.
-	self assert: move first == #upAtRootNode.
-	self assert: move second focus value = 0.! !
+	self deny: move isRight.
+	self assert: #upAtRootNode equals: move value error.
+	self assert: move value location focus value = 0.! !
 
 !BinaryTreeZipperTest methodsFor: 'testing - navigating' stamp: 'fbs 4/30/2011 16:01'!
 testUpOnEmptyTreeFails
@@ -252,8 +256,5 @@ testOn
 	| tree zipper |
 	tree := self emptyTree.
 	zipper := BinaryTreeZipper on: tree.
-	
-	self assert: zipper focus = tree.! !
-aryTreeZipper on: tree.
 	
 	self assert: zipper focus = tree.! !

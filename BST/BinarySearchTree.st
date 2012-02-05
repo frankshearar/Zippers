@@ -13,31 +13,29 @@ add: aComparableObject
 	^ BinarySearchTree tree: (self add: aComparableObject to: tree zipper) root! !
 
 
-!BinarySearchTree methodsFor: 'private' stamp: 'fbs 12/20/2011 16:41'!
+!BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/5/2012 22:40'!
 add: anObject to: aZipper
 	"Return a zipper with anObject inserted in the correct place: if we're at a leaf node, and <, insertDown; otherwise, move further into the tree."
-	| currentValue leftChild move |
+	| currentValue |
 	aZipper focus isEmpty ifTrue: [ ^ aZipper insertDown: (ZTree value: anObject) ].
 	
 	currentValue := aZipper focus value.
-	
-	"Move down to the left subnode."
-	move := aZipper safeDown.
-	move first = #success ifFalse:
-		["Leaf node. If adding a right subtree, add the empty tree as a left subtree."
-		^ anObject < currentValue
-			ifTrue: [ aZipper insertDown: (ZTree value: anObject) ]
-			ifFalse: [ (aZipper insertDown: ZTree empty) insertRight: (ZTree value: anObject) ] ].
 
-	leftChild := move second.
-	
-	"If less than, add to the left subtree."
-	anObject < currentValue
-		ifTrue: [ ^ self add: anObject to: leftChild ].
+	aZipper safeDown
+		either: [:leftChild | "Move down to the left subnode."
+			"If less than, add to the left subtree."
+			anObject < currentValue
+				ifTrue: [ ^ self add: anObject to: leftChild ].
 		
-	"Otherwise, add to the right subtree."
-	move := leftChild safeRight.
-	^ self add: anObject to: move second.! !
+			"Otherwise, add to the right subtree."
+			leftChild safeRight
+				either: [:rightChild | ^ self add: anObject to: rightChild]
+				or: [:error | "no right subtree" ^ aZipper insertDown: (ZTree value: anObject)].
+			]
+		or: [:error | "Leaf node. If adding a right subtree, add the empty tree as a left subtree."
+			^ anObject < currentValue
+				ifTrue: [aZipper insertDown: (ZTree value: anObject) ]
+				ifFalse: [(aZipper insertDown: ZTree empty) insertRight: (ZTree value: anObject)]].! !
 
 !BinarySearchTree methodsFor: 'private' stamp: 'fbs 2/21/2011 22:12'!
 tree: aTree

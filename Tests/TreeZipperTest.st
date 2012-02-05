@@ -432,7 +432,7 @@ testChangeReplacesValue
 		assert: (ZTree value: 1 children: {ZTree value: 3. ZTree value: 3.}) printString
 		equals: zipper root printString.! !
 
-!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 12/20/2011 20:33'!
+!TreeZipperTest methodsFor: 'testing - mutating' stamp: 'fbs 2/5/2012 21:36'!
 testChangeToAtTopReplacesValue
 	| tree zipper |
 	tree := self triangleTree.
@@ -440,7 +440,7 @@ testChangeToAtTopReplacesValue
 	
 	zipper := zipper changeTo: (ZTree value: 5 children: zipper focus children).
 	self assert: zipper focus value = 5 description: 'No change made'.
-	self assert: zipper safeRight first = #rightAtRootNode.
+	self assert: zipper safeRight value error = #rightAtRootNode.
 
 	self
 		assert: (ZTree value: 5 children: {ZTree value: 2. ZTree value: 3}) printString
@@ -637,79 +637,83 @@ testZipperShouldShareSubstructures
 	self assert: newTree children second == t children second.! !
 
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:24'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:55'!
 testSafeChangeReplacesValue
 	| attempt tree zipper |
 	tree := self triangleTree.
 	zipper := (TreeZipper on: tree) down.
 	
 	attempt := zipper safeChange: [ :z | ZTree value: (z value + 1)].
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 3 description: 'No change made'.
-	self assert: attempt second right focus value = 3 description: 'Position changed'.
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 3 description: 'No change made'.
+	self assert: attempt value right focus value = 3 description: 'Position changed'.
 
 	self
 		assert: (ZTree value: 1 children: {ZTree value: 3. ZTree value: 3.}) printString
-		equals: attempt second root printString.! !
+		equals: attempt value root printString.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:26'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:54'!
 testSafeChangeToAtTopReplacesValue
 	| attempt tree zipper |
 	tree := self triangleTree.
 	zipper := TreeZipper on: tree.
 	
 	attempt := zipper safeChangeTo: (ZTree value: 5 children: zipper focus children).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 5 description: 'No change made'.
-	self assert: attempt second safeRight first = #rightAtRootNode.
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 5 description: 'No change made'.
+	self deny: attempt value safeRight isRight.
+	self assert: #rightAtRootNode equals: attempt value safeRight value error.
 
 	self
 		assert: (ZTree value: 5 children: {ZTree value: 2. ZTree value: 3}) printString
-		equals: attempt second root printString.
+		equals: attempt value root printString.
 ! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:26'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:52'!
 testSafeChangeToReplacesValue
 	| attempt tree zipper |
 	tree := self triangleTree.
 	zipper := (TreeZipper on: tree) down.
 	
 	attempt := zipper safeChangeTo: (ZTree value: 5).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 5 description: 'No change made'.
-	self assert: attempt second right focus value = 3 description: 'Position changed'.
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 5 description: 'No change made'.
+	self assert: attempt value right focus value = 3 description: 'Position changed'.
 
 	self
 		assert: (ZTree value: 1 children: {ZTree value: 5. ZTree value: 3}) printString
-		equals: attempt second root printString.! !
+		equals: attempt value root printString.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:35'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:51'!
 testSafeDeleteAtTopFails
-	| attempt |
-	attempt := self emptyTree zipper safeDelete.
-	self assert: #deleteAtRoot equals: attempt first.! !
+	| attempt zipper |
+	zipper := self emptyTree zipper.
+	attempt := zipper safeDelete.
+	self deny: attempt isRight.
+	self assert: #deleteAtRoot equals: attempt value error.
+	self assert: zipper equals: attempt value location.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:28'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:50'!
 testSafeDeleteLeafNodeDeletesNode
 	| attempt tree |
 	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}.
 	attempt := tree zipper down safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second root = (ZTree value: 1 children: {ZTree value: 3}).! !
+	self assert: attempt isRight.
+	self assert: attempt value root = (ZTree value: 1 children: {ZTree value: 3}).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:36'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:50'!
 testSafeDeleteLeafNodeFocusesOnParent
 	| attempt tree zipper |
 	tree := ZTree value: 1 children: {ZTree value: 2}.
 	zipper := tree zipper down.
 	attempt := zipper safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second root = (ZTree value: 1).
-	self assert: attempt second focus value = 1.! !
+	self assert: attempt isRight.
+	self assert: attempt value root = (ZTree value: 1).
+	self assert: attempt value focus value = 1.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:30'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:50'!
 testSafeDeleteOldestSiblingFocusesOnYoungerSibling
 	| attempt tree zipper |
 	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
@@ -717,20 +721,20 @@ testSafeDeleteOldestSiblingFocusesOnYoungerSibling
 	self assert: zipper focus value = 2.
 	attempt := zipper safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 3 description: 'Zipper focused on wrong sibling'.
-	self assert: attempt second root = (ZTree value: 1 children: {ZTree value: 3. ZTree value: 4}) description: 'Wrong thing deleted'.! !
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 3 description: 'Zipper focused on wrong sibling'.
+	self assert: attempt value root = (ZTree value: 1 children: {ZTree value: 3. ZTree value: 4}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:30'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:50'!
 testSafeDeleteOnlyLeafNode
 	| attempt tree |
 	tree := ZTree value: 1 children: {ZTree value: 2}.
 	attempt := tree zipper down safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second root = (ZTree value: 1).! !
+	self assert: attempt isRight.
+	self assert: attempt value root = (ZTree value: 1).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:31'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:49'!
 testSafeDeleteYoungerSiblingFocusesOnOlderSibling
 	| attempt tree zipper |
 	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
@@ -738,11 +742,11 @@ testSafeDeleteYoungerSiblingFocusesOnOlderSibling
 	self assert: zipper focus value = 3.
 	attempt := zipper safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 2 description: 'Zipper focused on wrong sibling'.
-	self assert: attempt second root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 4}) description: 'Wrong thing deleted'.! !
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 2 description: 'Zipper focused on wrong sibling'.
+	self assert: attempt value root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 4}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:32'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:49'!
 testSafeDeleteYoungestSiblingFocusesOnOlderSibling
 	| attempt tree zipper |
 	tree := ZTree value: 1 children: {ZTree value: 2. ZTree value: 3. ZTree value: 4}.
@@ -750,78 +754,81 @@ testSafeDeleteYoungestSiblingFocusesOnOlderSibling
 	self assert: zipper focus value = 4.
 	attempt := zipper safeDelete.
 	
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 3 description: 'Zipper focused on wrong sibling'.
-	self assert: attempt second root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}) description: 'Wrong thing deleted'.! !
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 3 description: 'Zipper focused on wrong sibling'.
+	self assert: attempt value root = (ZTree value: 1 children: {ZTree value: 2. ZTree value: 3}) description: 'Wrong thing deleted'.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:13'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:39'!
 testSafeInsertDownInsertsChild
 	| attempt tree zipper |
 	tree := ZTree value: 0.
 	zipper := tree zipper.
 	
 	attempt := zipper safeInsertDown: (ZTree value: 1).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 1 description: 'Zipper not focused on new node'.
-	self shouldnt: [attempt second up] raise: ZipperNavigation.
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 1 description: 'Zipper not focused on new node'.
+	self shouldnt: [attempt value up] raise: ZipperNavigation.
 	
-	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1}).! !
+	self assert: attempt value root = (ZTree value: 0 children: {ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:10'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:39'!
 testSafeInsertDownOnEmptyTreeIsATreeWithOneNode
 	| attempt tree zipper |
 	tree := ZTree empty.
 	zipper := tree zipper.
 	
 	attempt := zipper safeInsertDown: (ZTree value: 0).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 0 description: 'Zipper not focused on new node'.
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 0 description: 'Zipper not focused on new node'.
 	
-	self assert: attempt second root = (ZTree value: 0).! !
+	self assert: attempt value root = (ZTree value: 0).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:01'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:38'!
 testSafeInsertLeftInsertsImmediatelyOlderSibling
 	| attempt tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}.
 	zipper := tree zipper.
 	attempt := zipper down right safeInsertLeft: (ZTree value: 3).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 3 description: 'Zipper not focused on new node'.
-	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 3 description: 'Zipper not focused on new node'.
+	self assert: attempt value root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 3. ZTree value: 2}).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 21:00'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:38'!
 testSafeInsertLeftInsertsOlderSibling
 	| attempt tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
 	attempt := zipper down safeInsertLeft: (ZTree value: 2).
-	self assert: attempt first equals: #success.
-	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
+	self assert: attempt isRight.
+	self assert: attempt value root = (ZTree value: 0 children: {ZTree value: 2. ZTree value: 1}).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 20:58'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:38'!
 testSafeInsertLeftOnRootIndicatesFailure
 	| attempt tree zipper |
 	tree := ZTree value: 0.
 	zipper := tree zipper.
 	attempt := zipper safeInsertLeft: (ZTree value: 1).
-	self assert: #insertLeftAtRoot equals: attempt first.
-	self assert: zipper = attempt second.! !
+	self deny: attempt isRight.
+	self assert: #insertLeftAtRoot equals: attempt value error.
+	self assert: zipper = attempt value location.! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 20:51'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:37'!
 testSafeInsertRightInsertsYoungerSibling
 	| attempt tree zipper |
 	tree := ZTree value: 0 children: {ZTree value: 1}.
 	zipper := tree zipper.
 	attempt := zipper down safeInsertRight: (ZTree value: 2).
-	self assert: #success equals: attempt first.
-	self assert: attempt second focus value = 2 description: 'Zipper not focused on new node'.
-	self assert: attempt second root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
+	self assert: attempt isRight.
+	self assert: attempt value focus value = 2 description: 'Zipper not focused on new node'.
+	self assert: attempt value root = (ZTree value: 0 children: {ZTree value: 1. ZTree value: 2}).! !
 
-!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 12/20/2011 20:49'!
+!TreeZipperTest methodsFor: 'testing - safe mutating' stamp: 'fbs 2/5/2012 21:36'!
 testSafeInsertRightOnRootIndicatesFailure
 	| attempt tree zipper |
 	tree := ZTree value: 0.
 	zipper := tree zipper.
 	attempt := zipper safeInsertRight: (ZTree value: 2).
-	self assert: #insertRightAtRoot equals: attempt first.
-	self assert: attempt second = zipper.! !
+	self assert: attempt isLeft.
+	self assert: #insertRightAtRoot equals: attempt value error.
+	self assert: attempt value location = zipper.! !
+zipper.! !

@@ -59,36 +59,28 @@ root
 safeDown
 	^ self safeLeft.! !
 
-!BinaryTreeZipper methodsFor: 'navigating' stamp: 'fbs 4/30/2011 15:59'!
+!BinaryTreeZipper methodsFor: 'navigating' stamp: 'fbs 2/5/2012 22:33'!
 safeLeft
 	"Return a pair (successfully moved, zipper on new location)."
 	"'Left' means 'down to the first child'."
-	| move success zipper |
-	move := internalZipper safeDown.
-	
-	success := ((move first == #success) and: [move second focus isEmpty not])
-		ifTrue: [ #success ]
-		ifFalse: [ #noLeftSubtree ].
-	
-	zipper := (success == #success)
-		ifTrue: [	move second ]
-		ifFalse: [ self ].
-	^ {success. zipper.}! !
+	^ internalZipper safeDown
+		either: [:z | z focus isEmpty
+			ifTrue: [Left value: (ZipperError error: #noLeftSubtree location: self)]
+			ifFalse: [Right value: z]]
+		or: [:error | Left value: (ZipperError error: #noLeftSubtree location: self)].! !
 
-!BinaryTreeZipper methodsFor: 'navigating' stamp: 'fbs 4/30/2011 15:54'!
+!BinaryTreeZipper methodsFor: 'navigating' stamp: 'fbs 2/5/2012 22:29'!
 safeRight
 	"Return a pair (successfully moved, zipper on new location)."
-	| moveD moveR |
-	moveD := internalZipper safeDown.
-	(moveD first == #success)
-		ifFalse: [ ^ {#rightAtLeafNode. self} ].
-	
-	moveR := moveD second safeRight.
-	^ ((moveR first == #success) and: [moveR second focus isEmpty not])
-		ifTrue:
-			[ {#success. moveR second} ]
-		ifFalse:
-			[ {#noRightSubtree. self} ].! !
+	^ internalZipper safeDown
+		either: [:leftChild |
+			leftChild safeRight
+				either: [:rightChild |
+					rightChild value focus isEmpty
+						ifTrue: [Left value: (ZipperError error: #noRightSubtree location: self)]
+						ifFalse: [Right value: rightChild]]
+				or: [:error | Left value: (ZipperError error: #noRightSubtree location: self)]]
+		or: [:error | Left value: (ZipperError error: #rightAtLeafNode location: self)]! !
 
 !BinaryTreeZipper methodsFor: 'navigating' stamp: 'fbs 4/30/2011 16:03'!
 safeUp
