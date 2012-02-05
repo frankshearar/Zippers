@@ -17,10 +17,6 @@ assertTraversalOf: aTree yieldsOrder: aCollection
 makeTraversal
 	^ self subclassResponsibility.! !
 
-!TraversalTestCase methodsFor: 'running' stamp: 'fbs 2/17/2011 22:04'!
-setUp
-	traversal := self makeTraversal.! !
-
 
 !TraversalTestCase methodsFor: 'testing - enumerating' stamp: 'fbs 2/17/2011 22:05'!
 testEmptyTraversalDoesNothing
@@ -58,6 +54,9 @@ TraversalTestCase class
 	instanceVariableNames: ''!
 
 !TraversalTestCase class methodsFor: 'testing' stamp: 'fbs 2/26/2011 22:55'!
+isAbstract
+	^ self name = #TraversalTestCase.! !
+estCase class methodsFor: 'testing' stamp: 'fbs 2/26/2011 22:55'!
 isAbstract
 	^ self name = #TraversalTestCase.! !
 
