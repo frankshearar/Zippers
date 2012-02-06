@@ -1,0 +1,65 @@
+Object subclass: #BreadthFirstTraversal
+	instanceVariableNames: 'queue visited zipper'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Zippers-Support'!
+
+!BreadthFirstTraversal methodsFor: 'enumerating' stamp: 'fbs 2/6/2012 09:28'!
+collect: aBlock
+	| prev |
+	prev := zipper.
+	[self hasNext] whileTrue:
+		[zipper := zipper changeTo: (aBlock value: zipper focus).
+		prev := zipper.
+		zipper := self next].
+	^ prev.! !
+
+!BreadthFirstTraversal methodsFor: 'enumerating' stamp: 'fbs 2/6/2012 09:29'!
+traverse: anObject collecting: aBlock
+	queue := OrderedCollection new.
+	visited := OrderedCollection new.
+	zipper := anObject zipper.
+	self addUnmarkedChildren: zipper.
+	
+	^ self collect: aBlock.! !
+
+!BreadthFirstTraversal methodsFor: 'enumerating' stamp: 'fbs 2/4/2012 23:38'!
+traverse: anObject doing: aBlock
+	"Throw away the return value."
+	self traverse: anObject collecting: aBlock.! !
+
+
+!BreadthFirstTraversal methodsFor: 'private' stamp: 'fbs 2/6/2012 09:26'!
+addUnmarkedChildren: aZipper
+	self trampoline: aZipper safeDown into: [ :zl |
+		zl
+			either: [ :z |
+				(visited includes: (z focus))
+					ifFalse: [queue addLast: z].
+				[z safeRight]]
+			or: [ :noChildrenError | noChildrenError location]]! !
+
+!BreadthFirstTraversal methodsFor: 'private' stamp: 'fbs 2/4/2012 23:26'!
+hasNext
+	^ zipper trail isEnd not! !
+
+!BreadthFirstTraversal methodsFor: 'private' stamp: 'fbs 2/4/2012 23:37'!
+next
+	self hasNext ifFalse: [^ zipper].
+	queue ifEmpty: [^ zipper := zipper class new
+		focus: zipper value
+		trail: (EndOfTraversalContext trail: zipper trail)].
+	
+	visited addLast: zipper value.
+	
+	zipper := queue first.
+	queue := queue allButFirst.
+	self addUnmarkedChildren: zipper.
+	^ zipper.! !
+
+!BreadthFirstTraversal methodsFor: 'private' stamp: 'fbs 2/6/2012 09:25'!
+trampoline: initialValue into: aUnaryBlock
+	| v |
+	v := [initialValue].
+	[v isBlock] whileTrue: [v := aUnaryBlock value: v value].
+	^ v.! !
