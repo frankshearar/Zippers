@@ -68,10 +68,6 @@ isRoot
 ZipperContext class
 	instanceVariableNames: ''!
 
-!ZipperContext class methodsFor: 'instance creation' stamp: 'fbs 2/4/2012 22:38'!
-end
-	^ End.! !
-
 !ZipperContext class methodsFor: 'instance creation' stamp: 'fbs 12/20/2011 20:37'!
 path: aTreeZipperTrail leftNodes: leftCollection rightNodes: rightCollection parentNodes: someObjects changed: aBoolean
 	^ self new
@@ -87,6 +83,12 @@ root
 
 
 !ZipperContext class methodsFor: 'class initialization' stamp: 'fbs 2/4/2012 22:43'!
+initialize
+	Root := RootContext new.! !
+
+
+ZipperContext initialize!
+ stamp: 'fbs 2/4/2012 22:43'!
 initialize
 	Root := RootContext new.! !
 
