@@ -3,6 +3,13 @@ Object subclass: #BreadthFirstTraversal
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Zippers-Support'!
+!BreadthFirstTraversal commentStamp: 'fbs 2/6/2012 09:38' prior: 0!
+A breadth first traversal processes nodes in order of depth, and left to right.
+
+Since a zipper excels at _local_ movement in a structure, and since I of necessity must use nonlocal movement (once it has visited all nodes in any depth n, it must leap to the leftmost node at depth n+1), I spawn zippers for each child node.
+
+This means that unlike my depth-first cousins (which all use a single zipper), I will _not_ preserve mutations on my structure except for the very last zipper I spawn - that of the rightmost deepest node.!
+
 
 !BreadthFirstTraversal methodsFor: 'enumerating' stamp: 'fbs 2/6/2012 09:28'!
 collect: aBlock
