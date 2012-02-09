@@ -213,17 +213,17 @@ root
 			ifTrue: [self changedUp changedRoot]
 			ifFalse: [self up root]]! !
 
-!BaseZipper methodsFor: 'navigating' stamp: 'fbs 2/5/2012 21:58'!
+!BaseZipper methodsFor: 'navigating' stamp: 'fbs 2/7/2012 09:37'!
 safeDown
 	"Return a pair whose first element tells us whether we successfully went down (represented by the value #success), and a Zipper. If yes, a Zipper focusing on the first child element of this node. If not, a Zipper focused on where we are."
 	^ self isBranch
 		ifTrue: [Right value: 
 			(self class new
-			focus: focus children first
+			focus: self children first
 			trail: (ZipperContext
 					path: trail
 					leftNodes: {}
-					rightNodes: focus children allButFirst
+					rightNodes: self children allButFirst
 					parentNodes: trail parentNodes, {focus}
 					changed: false))]
 		ifFalse: [Left value: (ZipperError error: #downAtLeafNode location: self)].! !
@@ -358,6 +358,7 @@ BaseZipper class
 !BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 2/4/2012 22:43'!
 on: aTree
 	^ self new focus: aTree trail: ZipperContext root.! !
+!
 s as an argument."
 	| move |
 	move := self perform: directionSelector.
