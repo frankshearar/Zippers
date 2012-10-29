@@ -387,4 +387,3 @@ BaseZipper class
 !BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 2/4/2012 22:43'!
 on: aTree
 	^ self new focus: aTree trail: ZipperContext root.! !
-il: TreeZipperNode end.! !

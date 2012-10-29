@@ -28,7 +28,4 @@ collectNodes: aBlock using: aZipper
 
 !PostOrderTraversal methodsFor: 'private' stamp: 'fbs 2/21/2011 18:01'!
 depthFirstTraversal: aZipper doing: aBlock
-	^ (self collect: [:each | each] using: aZipper) do: aBlock.
-! !
- | each] using: aZipper) do: aBlock.
-! !
+	^ (self collect: [:each | each] using: aZipper) do: aBlock.! !

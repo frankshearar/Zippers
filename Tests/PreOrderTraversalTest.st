@@ -30,4 +30,3 @@ testTreeTraversalMovesDepthFirst
 !PreOrderTraversalTest methodsFor: 'running' stamp: 'fbs 2/17/2011 22:04'!
 makeTraversal
 	^ PreOrderTraversal new.! !
-asOrderedCollection.! !

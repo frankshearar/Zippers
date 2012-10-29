@@ -56,4 +56,3 @@ ListZipper class
 !ListZipper class methodsFor: 'instance creation' stamp: 'fbs 12/28/2010 16:48'!
 on: aSequenceableCollection
 	^ self new focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !
-ew focus: aSequenceableCollection asOrderedCollection trail: OrderedCollection new.! !

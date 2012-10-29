@@ -87,5 +87,3 @@ testRightPastEndOfCollectionSignalsException
 	self
 		should: [ zipper right right right ]
 		raise: ZipperNavigation.! !
-! !
-!

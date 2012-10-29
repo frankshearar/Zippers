@@ -14,4 +14,3 @@ asBalancedBinaryTreeFrom: startIdx to: endIdx
 		children:
 			{self asBalancedBinaryTreeFrom: startIdx to: mid - 1.
 			self asBalancedBinaryTreeFrom: mid + 1 to: endIdx.}.! !
-ndIdx).! !

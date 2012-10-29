@@ -35,5 +35,3 @@ collectNodes: aBlock using: aZipper
 		addAll: collected;
 		addAll: right;
 		yourself.! !
-: right;
-		yourself.! !

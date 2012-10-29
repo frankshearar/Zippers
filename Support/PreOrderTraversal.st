@@ -49,6 +49,3 @@ collectNodes: aBlock using: aZipper
 		or: [:unusedError | "do nothing"].
 
 	^ collected.! !
- using: move second)].
-
-	^ collected.! !

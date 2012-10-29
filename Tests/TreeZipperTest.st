@@ -831,4 +831,3 @@ testSafeInsertRightOnRootIndicatesFailure
 	self assert: attempt isLeft.
 	self assert: #insertRightAtRoot equals: attempt value error.
 	self assert: attempt value location = zipper.! !
-zipper.! !
