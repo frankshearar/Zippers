@@ -13,4 +13,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Current status
 
-[![Build Status](https://secure.travis-ci.org/frankshearar/Control.png?branch=master)](http://travis-ci.org/frankshearar/Control)
+[![Build Status](https://secure.travis-ci.org/frankshearar/Zippers.png?branch=master)](http://travis-ci.org/frankshearar/Zippers)
