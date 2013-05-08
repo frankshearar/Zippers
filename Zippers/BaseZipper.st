@@ -358,32 +358,3 @@ BaseZipper class
 !BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 2/4/2012 22:43'!
 on: aTree
 	^ self new focus: aTree trail: ZipperContext root.! !
-!
-s as an argument."
-	| move |
-	move := self perform: directionSelector.
-	^ move first = #success
-		ifTrue: [ move second ]
-		ifFalse: [ aBlock cull: self focus ].! !
-
-!BaseZipper methodsFor: 'private' stamp: 'fbs 12/20/2011 21:14'!
-mutate: anObject with: actionSelector
-	| attempt |
-	attempt := self perform: actionSelector with: anObject.
-	(attempt first = #success)
-		ifTrue: [ ^ attempt second].
-		
-	ZipperNavigation signal: attempt first.! !
-
-!BaseZipper methodsFor: 'private' stamp: 'fbs 1/21/2012 09:49'!
-newFocusOn: anObject
-	^ self newFocusOn: anObject children: #().! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-BaseZipper class
-	instanceVariableNames: ''!
-
-!BaseZipper class methodsFor: 'instance creation' stamp: 'fbs 2/4/2012 22:43'!
-on: aTree
-	^ self new focus: aTree trail: ZipperContext root.! !
